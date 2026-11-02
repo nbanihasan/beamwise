@@ -1,0 +1,62 @@
+## From VLC to LiFi
+
+A VLC link moves bits from one lamp to one receiver. **LiFi** is a complete wireless *network*: bidirectional, multi-user, with mobility and handover, built from many lights <Cite id="haas2016lifi" />. It must answer the same questions as Wi-Fi or cellular: who transmits when, how users move between cells, and how traffic gets back up.
+
+## Attocells
+
+Each LiFi access point (AP) lights a few square metres, an **attocell**. Because light does not pass through walls and falls off steeply with angle, neighbouring cells interfere only at their edges, and the same bandwidth can be reused in every cell. The network's **area spectral efficiency** (bit/s/Hz/m²) therefore grows with AP density, the main capacity argument for LiFi <Cite id="haas2018paradigm" />.
+
+The received signal-to-interference-plus-noise ratio for a user served by AP $s$ is
+
+$$
+\text{SINR} = \frac{(R\,H_s P_t)^2}{\sum_{i \ne s,\ \text{same band}} (R\,H_i P_t)^2 + \sigma^2}.
+$$
+
+<AttocellLab />
+
+## Interference and frequency reuse
+
+With **full reuse**, cell edges suffer interference. With reuse factor $K$, neighbours use different bands (or colours, or time slots): edge SINR improves dramatically, but each cell gets only $1/K$ of the bandwidth. Cooperative alternatives include joint transmission from neighbouring APs, interference-aware scheduling, and **angle-diversity receivers** that look at one AP and ignore the others.
+
+## Multiple access inside a cell
+
+<Compare>
+  <Card title="TDMA">Users take turns in time. Simple, but each user waits for its slot.</Card>
+  <Card title="OFDMA">Users get different groups of OFDM subcarriers. Natural with DCO-OFDM; can give each user its best subcarriers.</Card>
+  <Card title="NOMA">Users share the same resources at different power levels; the strong user removes the weak user's signal by successive interference cancellation. LiFi's high SNR and slow channels suit it well <Cite id="marshoud2016noma" />.</Card>
+</Compare>
+
+## Mobility and handover
+
+A walking user crosses an attocell in seconds, so **handover** is frequent. A naive "always connect to the strongest AP" rule causes **ping-pong** at cell edges. Practical schemes add a hysteresis margin and a time-to-trigger, and predict blockage from device motion. Device **orientation** matters as much as position: a tilted phone can lose its AP while standing still <Cite id="soltani2019orientation" />.
+
+## Hybrid LiFi and WiFi
+
+LiFi gives very high capacity where there is line of sight; Wi-Fi gives coverage everywhere. **Hybrid LiFi/WiFi networks** (HLWNets) put users on whichever serves them best and move them when LiFi is blocked. Load balancing, handover between technologies, and user-behaviour models are surveyed by Wu *et al.* <Cite id="wu2021hybrid" />.
+
+## The uplink
+
+The downlink rides on the lights. The uplink cannot flash visible light at the ceiling, so it uses:
+
+- **infrared** LEDs or VCSELs on the device (most common, and what 802.11bb assumes),
+- **radio** (Wi-Fi or cellular) in hybrid networks,
+- **retroreflectors** that modulate and reflect the downlink light, for very low-power IoT tags.
+
+## Standards
+
+| Standard | Year | Scope |
+| --- | --- | --- |
+| IEEE 802.15.7 | 2011, rev. 2018 | Short-range OWC PHY/MAC: OOK, VPPM, CSK, and OCC PHYs <Cite id="ieee802157" /> |
+| ITU-T G.9991 | 2019 | High-speed indoor VLC transceiver, derived from the G.hn home-networking family <Cite id="itug9991" /> |
+| IEEE 802.11bb | 2023 | Light communications within the Wi-Fi family, 800–1000 nm band, reusing the 802.11 MAC <Cite id="ieee80211bb" /> |
+
+<KeyIdea>
+802.11bb is significant less for any new physics than for **integration**: LiFi becomes another Wi-Fi PHY, managed by the same MAC and software stack, which lowers the barrier for chipsets and devices.
+</KeyIdea>
+
+<Quiz
+  q="Moving from full frequency reuse to reuse factor 4 does what to a cell-edge user?"
+  options={['Raises SINR, lowers per-cell bandwidth', 'Lowers SINR, raises per-cell bandwidth', 'No change in SINR', 'Removes the need for handover']}
+  answer={0}
+  explain="Neighbours now use different bands, so edge interference drops and SINR rises, but each cell has only a quarter of the spectrum."
+/>

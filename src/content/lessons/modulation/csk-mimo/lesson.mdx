@@ -1,0 +1,61 @@
+## Colour as a dimension
+
+An RGB luminaire has three independently drivable emitters. Two very different ways to use them:
+
+- **Wavelength-division multiplexing (WDM)**: send *independent* streams on each colour and separate them with colour filters at the receiver. Four off-the-shelf RGBY LEDs with bit-loaded OFDM reached 15.73 Gb/s <Cite id="bian2019" />.
+- **Colour-shift keying (CSK)**: send *one* stream whose symbols are **colours**.
+
+### CSK
+
+CSK was standardised as PHY III of IEEE 802.15.7 <Cite id="ieee802157" />. The three LED colours define a triangle on the CIE 1931 $(x, y)$ chromaticity diagram. Any colour inside it can be produced by mixing the three with weights $P_i/P$:
+
+$$
+x_s = \sum_i \frac{P_i}{P} x_i, \qquad y_s = \sum_i \frac{P_i}{P} y_i, \qquad \sum_i P_i = P.
+$$
+
+Symbols are points inside the triangle: 4, 8 or 16 of them.
+
+<CskDiagram />
+
+<KeyIdea>
+CSK keeps the **total optical power constant**. Only the colour ratio changes, and fast enough that the eye sees the time-averaged colour, the centroid of the constellation. That makes CSK inherently flicker-free and keeps illumination unaffected, which is its main advantage over intensity schemes.
+</KeyIdea>
+
+The receiver uses three colour-filtered photodiodes, inverts the colour mixing (including crosstalk between filters) and decides on the nearest constellation point. Wider LED spacing in wavelength gives a bigger triangle and more distance between symbols.
+
+## Space as a dimension: optical MIMO
+
+Ceilings have many LEDs, and receivers can have several detectors. In radio, multipath makes MIMO channels rich and well-conditioned. In optics there is no phase and little multipath, so the channel gains from nearby LEDs to nearby detectors are **almost identical** <Cite id="zeng2009mimo" />:
+
+$$
+\mathbf{y} = R\,\mathbf{H}\,\mathbf{x} + \mathbf{n}, \qquad H_{ij} = H_{\text{LOS}}(\text{LED}_j \to \text{PD}_i).
+$$
+
+When the rows of $\mathbf H$ are nearly equal, the matrix is close to rank one. Its **condition number** explodes, and inverting it (zero-forcing) amplifies noise enormously.
+
+<MimoLab />
+
+Fixes:
+
+- **Spread the detectors** or tilt them in different directions (angle diversity).
+- Use an **imaging receiver**: a lens maps each LED onto different pixels, making $\mathbf H$ nearly diagonal <Cite id="zeng2009mimo" />.
+- Block some paths with apertures or partitions.
+
+## Three MIMO techniques
+
+Fath and Haas compared the main techniques for indoor OWC <Cite id="fath2013mimo" />:
+
+<Compare>
+  <Card title="Repetition coding (RC)">All LEDs send the same symbol. Pure power and diversity gain, no multiplexing, robust everywhere. Often the best choice when H is poorly conditioned.</Card>
+  <Card title="Spatial multiplexing (SMP)">Each LED sends an independent stream; the receiver inverts H. Highest rate when H is well conditioned (imaging receivers).</Card>
+  <Card title="Spatial modulation (SM)">Only one LED is on at a time; its *index* carries log₂(Nₜ) extra bits <Cite id="mesleh2011sm" />. No inter-channel interference, but needs distinct channel gains between LEDs.</Card>
+</Compare>
+
+Matheus *et al.* survey further multi-LED and multi-colour schemes <Cite id="matheus2019" />.
+
+<Quiz
+  q="Two LEDs 1 m apart on a 2.2 m ceiling send to two photodiodes 1 cm apart on a desk. Which technique is most likely to perform best?"
+  options={['Spatial multiplexing with zero-forcing', 'Repetition coding', 'Spatial modulation', 'They are all equal']}
+  answer={1}
+  explain="With detectors 1 cm apart, both rows of H are nearly identical, so H is ill-conditioned. SMP's zero-forcing would amplify noise and SM cannot tell the LEDs apart. Repetition coding simply adds the powers."
+/>

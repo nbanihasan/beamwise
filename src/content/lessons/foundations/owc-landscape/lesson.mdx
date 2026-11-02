@@ -1,0 +1,73 @@
+## Talking with light is old; doing it fast is new
+
+In 1880 Alexander Graham Bell sent his voice over a beam of sunlight with the *photophone*: a vibrating mirror at the transmitter and a selenium cell at the receiver. He considered it his greatest invention. Radio then took over wireless for a century, while light went into optical fibre.
+
+Two things brought light back into the air. First, the LED replaced incandescent and fluorescent lighting. An LED can be switched millions of times per second, far faster than the eye can see, so **every light fitting can become a transmitter**. Second, radio spectrum below 6 GHz became crowded, and the industry started looking for new bands. Infrared and visible light offer hundreds of terahertz of unlicensed spectrum.
+
+<SpectrumExplorer />
+
+<KeyIdea>
+Optical wireless communication (OWC) carries data on ultraviolet, visible or infrared light through free space or water. The physics is the same everywhere; the applications differ mainly in **distance**, **wavelength** and **what the receiver is**.
+</KeyIdea>
+
+## The five families
+
+<Compare>
+  <Card title="Visible light communication (VLC)">Illumination LEDs double as transmitters, typically indoors over 1–5 m. Standardised in IEEE 802.15.7 (PHY I–III).</Card>
+  <Card title="LiFi">A full wireless network on light: bidirectional, multi-user, with handover between lights. Downlink often visible, uplink infrared (IEEE 802.11bb, ITU-T G.9991).</Card>
+  <Card title="Optical camera communication (OCC)">The receiver is an image sensor, such as a phone camera. Slow but everywhere; also gives position. IEEE 802.15.7-2018 PHY IV–VI.</Card>
+  <Card title="Free-space optics (FSO)">Laser links between buildings, to drones, or to satellites: kilometres at Gb/s, fighting fog and turbulence.</Card>
+  <Card title="Underwater (UWOC)">Blue-green light through sea water: tens of metres at Mb/s to Gb/s, where radio barely penetrates.</Card>
+</Compare>
+
+Haas *et al.* draw a useful line between **VLC** and **LiFi** <Cite id="haas2016lifi" />. VLC is a point-to-point physical-layer technique. LiFi is a networked system with multiple access, handover and an uplink, comparable to Wi-Fi. Broad surveys of the whole field are Pathak *et al.* <Cite id="pathak2015survey" />, Matheus *et al.* <Cite id="matheus2019" />, and the comparative survey by Chowdhury *et al.* <Cite id="chowdhury2018" />. For IoT use cases, see Celik *et al.* <Cite id="celik2023iot" />.
+
+## Why use light?
+
+- **Spectrum.** The visible band alone spans about 380 THz, and nobody needs a licence to use it.
+- **Spatial reuse.** Light stops at walls. Every room, even every desk, can reuse the full bandwidth without interfering with its neighbours. This is the root of LiFi's high *area* spectral efficiency.
+- **Security.** Eavesdropping needs line of sight into the room.
+- **No RF interference.** Useful in hospitals, aircraft cabins, mines and petrochemical plants.
+- **Infrastructure for free.** Lighting must be installed and powered anyway.
+
+## Why it is hard
+
+<Callout type="warn" title="The four classic challenges">
+1. **Line of sight.** Block the light and the link drops, so diffuse reflections, multiple luminaires or RF fallback must cover the gaps.
+2. **Ambient light.** Sunlight and lamps add a large DC photocurrent and its shot noise.
+3. **Uplink.** A phone pointing visible light back at the ceiling would dazzle people, so uplinks use infrared or RF.
+4. **Mobility and orientation.** Phones tilt and move, and the channel gain depends strongly on angles.
+</Callout>
+
+## Anatomy of a link
+
+Every system in this atlas follows the same chain, and the curriculum follows it too:
+
+<Steps>
+<li><div><strong>Bits → symbols.</strong> Line coding and modulation shape the data for an intensity channel. See <LessonLink id="single-carrier" /> and <LessonLink id="optical-ofdm" />.</div></li>
+<li><div><strong>Symbols → light.</strong> A driver biases and modulates an LED or laser. See <LessonLink id="led-physics" />.</div></li>
+<li><div><strong>Light → light.</strong> Geometry, reflections, noise, fog or water change what arrives. See <LessonLink id="lambertian-channel" />.</div></li>
+<li><div><strong>Light → current.</strong> A photodiode, avalanche diode, SPAD or camera converts photons back to electrons. See <LessonLink id="photodetectors" />.</div></li>
+<li><div><strong>Current → bits.</strong> Synchronisation, equalisation and detection recover the data. See <LessonLink id="equalization" />.</div></li>
+</Steps>
+
+The foundational tutorial by Kahn and Barry <Cite id="kahn1997" /> still explains this chain better than almost anything else. It was written for infrared, and nearly all of it applies to visible light.
+
+## A short timeline
+
+| Year | Milestone |
+| --- | --- |
+| 1880 | Bell's photophone carries speech on sunlight |
+| 1993 | IrDA infrared links in laptops and phones |
+| 1997 | Kahn & Barry's tutorial establishes the IM/DD theory of infrared links |
+| 2004 | Komine & Nakagawa analyse white-LED VLC for indoor rooms |
+| 2011 | IEEE 802.15.7 published; the term "LiFi" popularised |
+| 2018 | IEEE 802.15.7 revised, adding optical camera communication <Cite id="ieee802157" /> |
+| 2023 | IEEE 802.11bb brings LiFi into the Wi-Fi family <Cite id="ieee80211bb" /> |
+
+<Quiz
+  q="Which property of light most directly gives LiFi its very high capacity per square metre?"
+  options={['Light travels faster than radio', 'Light is blocked by walls, so the same spectrum can be reused in every room', 'LEDs are cheap', 'Light has lower path loss than radio']}
+  answer={1}
+  explain="Both travel at c. Because light is confined, each small cell (an 'attocell') reuses the full bandwidth with little interference, multiplying the total capacity of a building."
+/>

@@ -1,0 +1,133 @@
+/*
+  Lumen Atlas design tokens.
+  Layout concept: an optical bench at night. Ink-dark surfaces, instruments laid out on a grid,
+  and colour that comes from the subject itself: the blue pump and yellow phosphor of a white LED,
+  plus the visible spectrum used to colour-code the curriculum (each track has a wavelength).
+  Dark-first; light theme mirrors every token.
+*/
+:root {
+  color-scheme: dark;
+  --bg: #08090e;
+  --bg-2: #0c0e15;
+  --surface: #11141d;
+  --surface-2: #171b27;
+  --surface-3: #1f2433;
+  --line: #222838;
+  --line-strong: #333b52;
+  --text: #e9ecf3;
+  --text-2: #a7afc3;
+  --text-3: #6f7890;
+  --pump: #6d8dff; /* blue pump LED, links and focus */
+  --pump-soft: rgba(109, 141, 255, 0.14);
+  --phosphor: #ffcf6b; /* yellow phosphor, primary action */
+  --phosphor-ink: #1b1405;
+  --phosphor-soft: rgba(255, 207, 107, 0.13);
+  --good: #4fd6a0;
+  --warn: #ffb547;
+  --bad: #ff6b7d;
+  --plot-grid: rgba(167, 175, 195, 0.09);
+  --plot-axis: rgba(167, 175, 195, 0.34);
+  --c1: #6d8dff;
+  --c2: #ffcf6b;
+  --c3: #4fd6a0;
+  --c4: #ff7aa8;
+  --c5: #b48cff;
+  --c6: #5ad8ff;
+  --glow: rgba(255, 207, 107, 0.35);
+  --shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 20px 50px -24px rgba(0, 0, 0, 0.7);
+  --scene-bg: #07080c;
+  --hero-grad: linear-gradient(92deg, #7a8cff 0%, #5ad8ff 38%, #b6f0a0 62%, #ffcf6b 82%, #ff9a6b 100%);
+
+  --font-display: 'Bricolage Grotesque', 'Avenir Next', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'IBM Plex Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Cascadia Code', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  --step--1: 0.82rem;
+  --step-0: 1rem;
+  --step-1: 1.2rem;
+  --step-2: 1.5rem;
+  --step-3: 2rem;
+  --step-4: clamp(2.3rem, 4.6vw, 3.6rem);
+  --step-5: clamp(2.8rem, 7vw, 5.6rem);
+
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 16px;
+  --gutter-l: max(16px, env(safe-area-inset-left, 0px));
+  --gutter-r: max(16px, env(safe-area-inset-right, 0px));
+  --header-h: 60px;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) {
+    color-scheme: light;
+    --bg: #f5f6f9;
+    --bg-2: #eef0f5;
+    --surface: #ffffff;
+    --surface-2: #f3f4f8;
+    --surface-3: #e8ebf2;
+    --line: #e1e4ec;
+    --line-strong: #c9cfdc;
+    --text: #10131c;
+    --text-2: #4a5268;
+    --text-3: #7c859b;
+    --pump: #2f55e4;
+    --pump-soft: rgba(47, 85, 228, 0.1);
+    --phosphor: #e29a12;
+    --phosphor-ink: #ffffff;
+    --phosphor-soft: rgba(226, 154, 18, 0.13);
+    --good: #12925f;
+    --warn: #b86e00;
+    --bad: #d22c48;
+    --plot-grid: rgba(16, 19, 28, 0.07);
+    --plot-axis: rgba(16, 19, 28, 0.32);
+    --c1: #2f55e4;
+    --c2: #d98a00;
+    --c3: #11936a;
+    --c4: #d43f7c;
+    --c5: #7a4fe0;
+    --c6: #0a8fb8;
+    --glow: rgba(226, 154, 18, 0.25);
+    --shadow: 0 1px 2px rgba(16, 19, 28, 0.04), 0 16px 40px -24px rgba(16, 19, 28, 0.25);
+    --scene-bg: #0b0d13;
+    --hero-grad: linear-gradient(92deg, #3d4fe0 0%, #0a8fb8 38%, #1d9a5a 62%, #c97f00 82%, #d4502a 100%);
+  }
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f5f6f9;
+  --bg-2: #eef0f5;
+  --surface: #ffffff;
+  --surface-2: #f3f4f8;
+  --surface-3: #e8ebf2;
+  --line: #e1e4ec;
+  --line-strong: #c9cfdc;
+  --text: #10131c;
+  --text-2: #4a5268;
+  --text-3: #7c859b;
+  --pump: #2f55e4;
+  --pump-soft: rgba(47, 85, 228, 0.1);
+  --phosphor: #e29a12;
+  --phosphor-ink: #ffffff;
+  --phosphor-soft: rgba(226, 154, 18, 0.13);
+  --good: #12925f;
+  --warn: #b86e00;
+  --bad: #d22c48;
+  --plot-grid: rgba(16, 19, 28, 0.07);
+  --plot-axis: rgba(16, 19, 28, 0.32);
+  --c1: #2f55e4;
+  --c2: #d98a00;
+  --c3: #11936a;
+  --c4: #d43f7c;
+  --c5: #7a4fe0;
+  --c6: #0a8fb8;
+  --glow: rgba(226, 154, 18, 0.25);
+  --shadow: 0 1px 2px rgba(16, 19, 28, 0.04), 0 16px 40px -24px rgba(16, 19, 28, 0.25);
+  --scene-bg: #0b0d13;
+  --hero-grad: linear-gradient(92deg, #3d4fe0 0%, #0a8fb8 38%, #1d9a5a 62%, #c97f00 82%, #d4502a 100%);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}

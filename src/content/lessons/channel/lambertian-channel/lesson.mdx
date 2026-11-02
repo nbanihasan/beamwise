@@ -1,0 +1,85 @@
+## How an LED spreads its light
+
+Most LEDs are well described as **generalised Lambertian** emitters. The radiant intensity (watts per steradian) falls off with the angle $\phi$ from the LED's axis as
+
+$$
+R_0(\phi) = \frac{m+1}{2\pi}\cos^m(\phi), \qquad \phi \in [-\pi/2,\, \pi/2].
+$$
+
+The factor $\frac{m+1}{2\pi}$ makes the pattern integrate to 1 over the hemisphere, so total emitted power is conserved. The **Lambertian order** $m$ sets the beam width and is fixed by the **semi-angle at half power** $\Phi_{1/2}$, the angle where intensity has dropped to half its on-axis value:
+
+$$
+\cos^m(\Phi_{1/2}) = \tfrac12 \quad\Longrightarrow\quad m = \frac{-\ln 2}{\ln\cos\Phi_{1/2}}.
+$$
+
+A bare LED chip with $\Phi_{1/2} = 60^\circ$ has $m = 1$, an ideal Lambertian source. A lens that narrows the beam to $15^\circ$ gives $m \approx 20$.
+
+## The DC channel gain
+
+Place a detector of area $A$ at distance $d$, at an **irradiance angle** $\phi$ from the LED axis and an **incidence angle** $\psi$ from its own normal. The fraction of transmitted power it collects is the line-of-sight (LOS) DC gain <Cite id="kahn1997" />:
+
+$$
+H_{\text{LOS}}(0) =
+\begin{cases}
+\dfrac{(m+1)A}{2\pi d^2}\cos^m(\phi)\; T_s(\psi)\; g(\psi)\cos(\psi), & 0 \le \psi \le \Psi_c \\[1em]
+0, & \psi > \Psi_c
+\end{cases}
+$$
+
+Each factor has a physical meaning:
+
+- $\frac{1}{d^2}$: the light spreads over a sphere, the inverse-square law;
+- $\cos^m\phi$: the LED's beam pattern;
+- $A\cos\psi$: the detector's area as seen from the source (its *effective* area);
+- $T_s(\psi)$: transmission of an optical filter, such as the blue filter from <LessonLink id="led-physics" />;
+- $g(\psi)$: gain of an optical concentrator; for an ideal non-imaging concentrator of refractive index $n$, $g = n^2/\sin^2\Psi_c$;
+- $\Psi_c$: the receiver's **field of view** (FOV). Light from outside it is rejected completely.
+
+The received optical power is then simply $P_r = H(0)\,P_t$, summed over all LEDs in view.
+
+## Light up a room
+
+The figure below uses exactly this model in the reference room introduced by Komine and Nakagawa: 5 × 5 × 3 m, four luminaires, receivers on a desk plane 0.85 m above the floor <Cite id="komine2004" />.
+
+<LambertianRoom />
+
+Try these experiments:
+
+1. **Narrow the semi-angle** to 20°. Power concentrates under each luminaire, but the spaces between them go dark, and uniformity collapses.
+2. **Narrow the FOV** to 30°. The concentrator gain rises, the area right under each light gets brighter, and the corners lose line of sight entirely.
+3. **Raise the desk.** Shorter distance means more power, but the cones cover less floor.
+
+<KeyIdea>
+Every OWC channel design trades **power density** against **coverage**. Narrow beams and narrow fields of view give strong, interference-free links over small areas; wide ones cover rooms with weaker signals. LiFi networks exploit the narrow end deliberately, with many small "attocells" (<LessonLink id="lifi-networks" />).
+</KeyIdea>
+
+## A worked example
+
+An LED 2.15 m directly above a 1 cm² detector, $\Phi_{1/2} = 60^\circ$ ($m=1$), no filter, no concentrator, $\phi = \psi = 0$:
+
+$$
+H(0) = \frac{(1+1)\times 10^{-4}}{2\pi\,(2.15)^2} \approx 6.9 \times 10^{-6}.
+$$
+
+With 2 W of optical power, the detector receives about 14 µW (−18.6 dBm). Add a concentrator with $n = 1.5$ and a 60° FOV, and the gain rises by $2.25/0.75 = 3$, to about 41 µW.
+
+<MathBox title="Special case: receiver facing straight up">
+If the LED faces straight down and the receiver straight up at vertical distance $h$, then $\cos\phi = \cos\psi = h/d$ and
+$$
+H(0) = \frac{(m+1)A\,h^{m+1}}{2\pi\, d^{m+3}}.
+$$
+This compact form is what makes received-signal-strength positioning possible: it can be inverted for $d$ (<LessonLink id="positioning-sensing" />).
+</MathBox>
+
+## Orientation matters
+
+The model assumed an upward-facing receiver. A phone in a hand is tilted, often by 30–40°, which changes $\psi$ and can push the light out of the FOV entirely. Soltani *et al.* measured real device orientation and showed that it dominates LiFi channel statistics <Cite id="soltani2019orientation" />. Remedies include angle-diversity receivers with several detectors facing different directions, multiple access points, and the optical RIS ideas in <LessonLink id="research-frontiers" />.
+
+For the full derivation and MATLAB-style models of LOS and diffuse links, see Chapter 3 of Ghassemlooy *et al.* <Cite id="ghassemlooy2019book" />.
+
+<Quiz
+  q="An LED's semi-angle is reduced from 60° to 30°. What happens to the on-axis channel gain, everything else unchanged?"
+  options={['It halves', 'It stays the same', 'It increases about 1.5×', 'It increases about 2.9×']}
+  answer={3}
+  explain="On axis cos φ = 1, so the gain scales with m + 1. Φ½ = 30° gives m = −ln2 / ln(cos 30°) ≈ 4.82, so m + 1 goes from 2 to 5.82: a factor of about 2.9. The same power is squeezed into a narrower cone."
+/>

@@ -1,0 +1,37 @@
+## OWC in 6G
+
+6G roadmaps list optical wireless as a complement to radio for very high data density, RF-sensitive environments and integrated sensing <Cite id="chi2020_6g" />. The remaining obstacles are familiar from earlier lessons: limited transmitter bandwidth, line-of-sight blockage, device orientation, uplink design and integration with radio networks. Each frontier below attacks one of them.
+
+<FrontierMap />
+
+## Faster transmitters
+
+**Micro-LED arrays** combine GHz bandwidth per pixel with many pixels for parallel streams. Single violet µLEDs have exceeded 10 Gb/s <Cite id="islim2017" />. **Laser-based lighting**, blue laser diodes with phosphor, offers GHz bandwidth with high power. **Wavelength multiplexing** across RGBY LEDs already passed 15 Gb/s with off-the-shelf parts <Cite id="bian2019" />. Industrial multi-gigabit links are standardised in IEEE 802.15.13 <Cite id="ieee8021513" />.
+
+## Beating blockage: optical RIS
+
+A **reconfigurable intelligent surface** for light is a programmable mirror array or liquid-crystal metasurface on a wall. It steers light from an AP to a user whose direct path is blocked, or towards a tilted receiver. Aboagye *et al.* give a full tutorial on RIS-assisted VLC: mirror arrays versus metasurfaces, channel models, and the optimisation problems of element orientation and placement <Cite id="aboagye2023ris" />.
+
+<Callout type="research" title="Open problems in optical RIS">
+Fast and cheap reconfiguration; channel estimation with many passive elements; joint optimisation with AP selection and handover; and the physical size needed for useful gain.
+</Callout>
+
+## Receivers at the quantum limit
+
+**SPAD arrays** bring photon-counting sensitivity to CMOS. They suit long-range, low-light and underwater links, and could reduce outage in mobile LiFi. Challenges are dead-time saturation, dark counts and strong ambient light <Cite id="huang2024spc" />.
+
+## Light for power and data: SLIPT
+
+A **solar cell** is a large photodiode. It can harvest energy from the DC component of the light while decoding data from the AC part: simultaneous lightwave information and power transfer. Battery-free IoT sensors become possible. The trade-off is bandwidth: large cells are slow <Cite id="wang2015solar" />.
+
+## Learning-based transceivers
+
+LED non-linearity, memory effects and changing channels are hard to model exactly. Neural-network equalisers, learned constellations and end-to-end autoencoders are being explored to handle them, with open questions about generalisation, complexity and interpretability.
+
+## Networks and IoT
+
+Hybrid LiFi/WiFi load balancing and handover <Cite id="wu2021hybrid" />, NOMA and rate splitting, and OWC for massive IoT, including backscatter and retroreflector uplinks <Cite id="celik2023iot" />, are all active. The Library collects the surveys to start from.
+
+## Contribute a frontier lesson
+
+The field moves monthly. If you work on one of these topics, the <a href="#/contribute">contribution guide</a> shows how to add a lesson or a simulation to Lumen Atlas in a single folder.

@@ -1,0 +1,72 @@
+## A diode that glows
+
+An LED is a p–n junction made from a **direct-bandgap** semiconductor. Under forward bias, electrons from the n side and holes from the p side are pushed into a thin **active region**, usually a stack of quantum wells a few nanometres thick. When an electron drops from the conduction band into a hole in the valence band, it can release its energy as a photon:
+
+$$
+E_{\text{photon}} = h\nu = \frac{hc}{\lambda} \approx E_g, \qquad \lambda\,[\text{nm}] \approx \frac{1240}{E_g\,[\text{eV}]}.
+$$
+
+The bandgap of the material sets the colour: InGaN gives blue and green, AlGaInP red and amber, GaAs and AlGaAs near infrared.
+
+<LedJunction />
+
+Not every recombination makes light. Defects and Auger processes turn some of the energy into heat. The **internal quantum efficiency** measures the radiative share, and the **external** efficiency also accounts for light trapped inside the chip by total internal reflection.
+
+## White light: phosphor or three chips
+
+Illumination needs white light. There are two common recipes <Cite id="karunatilaka2015" />:
+
+<Compare>
+  <Card title="Phosphor-converted (pc-LED)">A blue InGaN die coated with a yellow phosphor (often YAG:Ce). Cheap and efficient, and used in almost every luminaire. The phosphor responds in microseconds, so the white output is limited to a few MHz.</Card>
+  <Card title="RGB (multi-chip)">Separate red, green and blue dies. More expensive, but each colour can be modulated independently, which allows wavelength-division multiplexing and colour-shift keying.</Card>
+</Compare>
+
+A common trick with phosphor LEDs is a **blue filter** at the receiver. It discards the slow yellow component and keeps the fast blue pump, raising the usable bandwidth from about 3 MHz to about 10–20 MHz, at the cost of received power.
+
+## Why an LED is a low-pass filter
+
+Two time constants limit how fast an LED can follow its drive current:
+
+1. **Carrier lifetime** $\tau$: how long injected carriers survive before recombining (nanoseconds).
+2. **RC time constant** from the junction capacitance and the driver's resistance.
+
+To first order, the optical response is
+
+$$
+H_{\text{LED}}(f) = \frac{1}{1 + j f / f_{3\text{dB}}}, \qquad f_{3\text{dB}} \approx \frac{1}{2\pi \tau}.
+$$
+
+Higher current density shortens the carrier lifetime. This is why **micro-LEDs** (µLEDs, 5–100 µm across) are so fast. They run at enormous current densities with tiny capacitance, reaching hundreds of MHz to more than 1 GHz of bandwidth. A single GaN µLED carried 3 Gb/s with OFDM in 2014 <Cite id="tsonev2014" />, and a violet µLED passed 10 Gb/s by 2017 <Cite id="islim2017" />. Off-the-shelf RGBY LEDs with wavelength multiplexing reached 15.73 Gb/s <Cite id="bian2019" />.
+
+## The L–I curve and non-linearity
+
+The light–current (L–I) characteristic is not a straight line. It has a **turn-on knee** at low current and **droop** at high current, from heating and efficiency droop. Communications wants a linear transfer, so we:
+
+- **bias** the LED in the middle of its most linear region,
+- keep the **signal swing** small enough to avoid the knee and the droop,
+- or **pre-distort** the drive signal to cancel the curvature.
+
+<LedCurves />
+
+<Callout type="warn" title="Flicker and dimming">
+The data signal rides on the illumination, so it must never be visible. IEEE 1789 gives recommended limits on flicker as a function of frequency and modulation depth <Cite id="ieee1789" />. Two rules follow: modulate at frequencies well above a few kHz, and keep the average level (the bias) steady. Dimming is then done by moving the bias or by changing the pulse duty cycle, which is the idea behind VPPM in <LessonLink id="single-carrier" />.
+</Callout>
+
+## Choosing an LED for a link
+
+| Type | Typical bandwidth | Strength | Weakness |
+| --- | --- | --- | --- |
+| Phosphor white | 2–5 MHz | Cheap, in every ceiling | Slow phosphor |
+| White + blue filter | 10–20 MHz | No new hardware at transmitter | Loses ~70 % of power |
+| RGB | 10–30 MHz per colour | WDM, CSK | Cost, colour balance |
+| Infrared LED | 10–50 MHz | Invisible: good for uplink | Eye-safety limits on power |
+| Micro-LED | 0.1–1+ GHz | Very fast, arrays | Low power per emitter |
+
+For a deeper treatment of devices for VLC, see the chapters on sources in Ghassemlooy *et al.* <Cite id="ghassemlooy2017vlcbook" />.
+
+<Quiz
+  q="A phosphor-converted white LED has a 3 MHz bandwidth. Which change most directly raises the bandwidth available to a receiver, without changing the LED?"
+  options={['Increase the drive current a lot', 'Put a blue optical filter in front of the photodiode', 'Use a larger photodiode', 'Add a second identical LED']}
+  answer={1}
+  explain="The slow component is the yellow phosphor. Filtering it out leaves the fast blue pump, typically raising the bandwidth several-fold at the cost of received power."
+/>

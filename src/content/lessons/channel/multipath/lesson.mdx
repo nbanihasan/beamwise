@@ -1,0 +1,64 @@
+## Walls are mirrors, roughly
+
+Painted walls, ceilings and furniture reflect 30–90 % of visible light. Most indoor surfaces are close to **diffuse (Lambertian) reflectors**: whatever direction light arrives from, they re-emit it in a $\cos\theta$ pattern. Every wall element therefore behaves like a weak secondary LED with $m = 1$.
+
+Light that bounces travels further than the direct ray, so it arrives later. At $c \approx 0.3$ m/ns, an extra 3 m of path is 10 ns of delay. At 100 Mb/s, a symbol lasts 10 ns.
+
+## First-order reflections
+
+Split a wall into small elements of area $dA_{\text{wall}}$ with reflectivity $\rho$. The element first acts as a receiver of the LED and then as a Lambertian transmitter towards the detector. Its contribution to the channel gain is <Cite id="kahn1997" />:
+
+$$
+dH_{\text{ref}}(0) = \frac{(m+1)A\,\rho\, dA_{\text{wall}}}{2\pi^2 d_1^2 d_2^2}\cos^m(\phi)\cos(\alpha)\cos(\beta)\,T_s(\psi)\,g(\psi)\cos(\psi),
+$$
+
+arriving with delay $(d_1 + d_2)/c$. Here $d_1$ is the LED–wall distance, $d_2$ the wall–detector distance, $\alpha$ the incidence angle at the wall and $\beta$ the re-emission angle. Higher-order bounces follow the same recursion. Barry *et al.* introduced the recursive method that the field still uses <Cite id="barry1993" />.
+
+<MultipathLab />
+
+## Delay spread
+
+From the impulse response $h(t)$, define the mean delay and the **RMS delay spread**:
+
+$$
+\bar\tau = \frac{\int t\, h(t)\,dt}{\int h(t)\,dt}, \qquad
+\tau_{\text{rms}} = \sqrt{\frac{\int (t-\bar\tau)^2 h(t)\,dt}{\int h(t)\,dt}}.
+$$
+
+$\tau_{\text{rms}}$ summarises how smeared the channel is. Two rules of thumb:
+
+- the channel's coherence bandwidth is roughly $1/(5\tau_{\text{rms}})$;
+- inter-symbol interference (ISI) stays small for symbol periods above about $10\,\tau_{\text{rms}}$, so single-carrier rates up to about $1/(10\tau_{\text{rms}})$ need no equaliser.
+
+Typical indoor visible light channels have $\tau_{\text{rms}}$ between 1 and 10 ns when LOS dominates, and more in corners or with shadowing <Cite id="lee2011multipath" />.
+
+<Callout type="key" title="LOS dominates, until it doesn't">
+Under a luminaire, the LOS component is often 10–20 dB stronger than the diffuse tail, so the channel is nearly flat over tens of MHz. In practice the **LED's bandwidth** usually limits the rate long before multipath does. Near walls, in corners, or when the LOS path is blocked, the diffuse part takes over and dispersion matters. OFDM and equalisers (<LessonLink id="optical-ofdm" />, <LessonLink id="equalization" />) handle both cases.
+</Callout>
+
+## Link configurations
+
+Kahn and Barry classify links by two choices: is the transmitter and receiver **directed** or not, and is there a **line of sight**?
+
+<Compare>
+  <Card title="Directed LOS">Narrow beams pointed at each other. Highest rates and lowest dispersion, but pointing and blocking are problems. FSO and fixed IR links.</Card>
+  <Card title="Non-directed LOS">Wide beams and wide FOVs: the VLC/LiFi default. Robust to orientation, with moderate dispersion.</Card>
+  <Card title="Diffuse">No line of sight: everything bounces off the ceiling. Very robust to blocking, but high path loss and the largest delay spread.</Card>
+</Compare>
+
+## From the impulse response to a model
+
+A useful closed-form approximation for the diffuse part is an exponential decay (the model used in the Link Lab):
+
+$$
+h(t) = H(0)\Big[(1-\kappa)\,\delta(t) + \frac{\kappa}{\tau}e^{-t/\tau}\,u(t)\Big],
+$$
+
+where $\kappa$ is the share of power arriving by reflection and $\tau$ sets the tail length. Its frequency response is a flat floor $(1-\kappa)$ plus a low-pass term with corner at $1/(2\pi\tau)$. For simulation recipes, see Chapter 3 of Ghassemlooy *et al.* <Cite id="ghassemlooy2019book" />.
+
+<Quiz
+  q="An indoor link has τ_rms = 5 ns. Roughly what is the highest symbol rate before you would expect to need an equaliser?"
+  options={['2 MBd', '20 MBd', '200 MBd', '2 GBd']}
+  answer={1}
+  explain="The rule of thumb is T_sym above about 10·τ_rms = 50 ns, i.e. about 20 MBd. In practice, LOS dominance often relaxes this."
+/>

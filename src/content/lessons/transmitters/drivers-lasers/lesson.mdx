@@ -1,0 +1,57 @@
+## The driver's job
+
+An LED is driven by **current**, not voltage: its light output tracks the current, while the voltage barely moves once it is conducting. A communication driver has to do two things at once:
+
+1. supply a steady **DC bias** current that sets the brightness and the operating point,
+2. add a fast **AC signal** current that carries the data,
+
+without letting the slow lighting power supply and the fast data path interfere with each other.
+
+## The bias-tee
+
+The classic solution is a **bias-tee**. A capacitor passes the high-frequency data but blocks DC, and an inductor passes DC but blocks the data. In lighting products the inductor branch is often a full constant-current LED driver, and the data is injected by a transistor stage in parallel.
+
+<DriverLab />
+
+## Pre-emphasis: speeding up a slow LED
+
+If you drive an LED faster than its bandwidth, each bit smears into the next. **Pre-emphasis** (also called pre-equalisation) shapes the drive current so the *light* output is closer to the desired waveform. Typically it overshoots at every transition to charge or discharge the junction capacitance faster.
+
+For a first-order LED, an ideal pre-emphasis filter is the inverse of the LED's response:
+
+$$
+G(f) = \frac{1}{H_{\text{LED}}(f)} = 1 + j\frac{f}{f_{3\text{dB}}}.
+$$
+
+This is a high-pass boost that grows without limit, so real circuits roll it off at some frequency. Simple passive RC networks, or a parallel resistor–capacitor in series with the LED, have pushed white LEDs from a few MHz to tens of MHz <Cite id="karunatilaka2015" />.
+
+<Callout type="key">
+Pre-emphasis is not free. The total current swing is limited by the LED, so spending it on transition spikes leaves less for the steady part of the signal. You trade signal amplitude for bandwidth, exactly as an equaliser at the receiver trades noise for bandwidth (<LessonLink id="equalization" />).
+</Callout>
+
+## Laser sources
+
+LEDs dominate VLC because they are already in the ceiling. Lasers offer something LEDs cannot: **stimulated emission**, which brings narrow spectra, tight beams and very high modulation bandwidths.
+
+<Compare>
+  <Card title="Edge-emitting laser diode (LD)">GHz bandwidths, watts of power, and a highly directional, elliptical beam. Used in FSO and, with phosphor, in laser-based white lighting for very fast VLC.</Card>
+  <Card title="VCSEL">Vertical-cavity surface-emitting laser: circular beam, low threshold, cheap 2D arrays at 850/940 nm. A natural fit for infrared LiFi uplinks and short-range multi-Gb/s links.</Card>
+  <Card title="Superluminescent diode">Between LED and laser: broad spectrum, low coherence (less speckle), higher bandwidth than an LED.</Card>
+</Compare>
+
+Blue laser diodes pumping a phosphor give white light with GHz modulation bandwidth. The blue part carries the data, and the phosphor makes the light safe and white. This "laser lighting" is a recurring theme in 6G VLC roadmaps <Cite id="chi2020_6g" />. Industrial multi-gigabit OWC is standardised in IEEE 802.15.13 <Cite id="ieee8021513" />.
+
+## Eye safety
+
+A laser beam can be focused by the eye's lens to a tiny spot on the retina, so the permitted power is much lower than for an extended LED source. Laser products are classified by **IEC 60825-1**. LEDs and lamps fall under the photobiological safety standard **IEC 62471**, which also limits blue-light hazard. Practical consequences:
+
+- infrared links (invisible, no blink reflex) have the strictest limits at a given power;
+- diffusers that enlarge the apparent source size raise the allowed power;
+- 1550 nm is absorbed before the retina, which is why long-range FSO prefers it <Cite id="khalighi2014fso" />.
+
+<Quiz
+  q="A first-order LED has f3dB = 10 MHz. An ideal pre-emphasis filter for it would have what magnitude response at 30 MHz?"
+  options={['About 0.32 (−10 dB)', 'About 1 (0 dB)', 'About 3.2 (+10 dB)', 'About 10 (+20 dB)']}
+  answer={2}
+  explain="|1 + j·f/f3dB| = √(1 + 3²) ≈ 3.16, a +10 dB boost, exactly cancelling the LED's −10 dB at 30 MHz."
+/>

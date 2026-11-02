@@ -1,0 +1,64 @@
+## The photoelectric conversion
+
+A photon with energy above the semiconductor bandgap can be absorbed and create an electron–hole pair. In a reverse-biased photodiode the electric field sweeps the pair apart, giving a current. The figure of merit is the **responsivity**:
+
+$$
+R = \frac{I_p}{P_r} = \frac{\eta\, q\, \lambda}{h c} \;\approx\; \frac{\eta\,\lambda[\text{nm}]}{1240}\ \text{A/W},
+$$
+
+where $\eta$ is the quantum efficiency (electrons per incident photon). Silicon with $\eta = 0.8$ gives about 0.55 A/W at 850 nm and about 0.3 A/W in the blue. Longer wavelengths give more electrons per watt simply because each photon carries less energy.
+
+<DetectorLab />
+
+## PIN photodiode
+
+A thick intrinsic (I) layer between P and N widens the depletion region. This absorbs more light (higher $\eta$) and lowers the capacitance (faster). There is no internal gain: one photon gives at most one electron. Weak signals are therefore buried in the amplifier's thermal noise, which makes the PIN **thermal-noise limited**. Cheap, linear and robust, PINs are the default VLC and LiFi receiver <Cite id="kahn1997" />.
+
+## Avalanche photodiode (APD)
+
+Bias the diode near breakdown and carriers gain enough energy to knock out new pairs by **impact ionisation**. The current is multiplied by an average gain $M$ of 10–200. The multiplication is random, which adds an **excess noise factor**:
+
+$$
+F(M) = k_A M + (1-k_A)\left(2 - \frac1M\right),
+$$
+
+where $k_A$ is the ratio of hole to electron ionisation rates (about 0.02 for silicon, about 0.5 for germanium). Low $k_A$ means quieter gain. As shown in <LessonLink id="noise-snr" />, the best SNR comes at a finite optimum $M$.
+
+## Single-photon avalanche diode (SPAD)
+
+Bias an APD **above** breakdown and a single carrier triggers a self-sustaining avalanche: a macroscopic current pulse from one photon. This is **Geiger mode**. A quenching circuit then lowers the bias to stop the avalanche and restores it after a **dead time** $\tau_d$ (nanoseconds to microseconds), during which the SPAD is blind.
+
+- Output is *digital*: count the pulses, so there is no thermal noise in the analogue sense.
+- Count rate saturates at high light: $\lambda_{\text{det}} = \lambda/(1+\lambda\tau_d)$ for a non-paralysable SPAD.
+- Errors come from Poisson photon statistics, **dark counts** and **afterpulsing**.
+
+Arrays of thousands of SPADs share the light, multiplying the saturation limit. Their behaviour with dead time has been analysed in detail <Cite id="sarbazi2020" />. Huang *et al.* argue that single-photon counting receivers can greatly extend OWC range and robustness in 6G networks <Cite id="huang2024spc" />.
+
+<SpadLab />
+
+<Callout type="key" title="The quantum limit">
+An ideal photon-counting OOK receiver with no dark counts makes an error only when a "1" produces zero photons: $P_e = \tfrac12 e^{-N_1}$. For $10^{-9}$ that is about 20 photons per "1" bit, or about 10 photons per bit on average. A PIN with a good amplifier needs thousands. This gap is why SPADs matter for long or weak links.
+</Callout>
+
+## Photomultiplier tube (PMT)
+
+The oldest single-photon detector, and still unbeaten for large sensitive areas. A photon frees an electron from a **photocathode** in a vacuum tube. The electron is accelerated onto a chain of **dynodes**, each releasing 3–5 secondary electrons, for an overall gain of $10^5$–$10^7$. PMTs need about 1 kV, are fragile and costly, and saturate in bright light. They are used in UV non-line-of-sight links, deep-space and underwater links <Cite id="zeng2017uwoc" />.
+
+## Choosing a detector
+
+| | PIN | APD | SPAD array | PMT |
+| --- | --- | --- | --- | --- |
+| Internal gain | 1 | 10–200 | Geiger (digital) | $10^5$–$10^7$ |
+| Sensitivity | low | medium | single photon | single photon |
+| Linearity / dynamic range | excellent | good | limited by dead time | limited |
+| Bias | 0–10 V | 50–400 V | ~20–40 V (CMOS) | ~1 kV |
+| Typical use | indoor VLC/LiFi | FSO, longer IR links | long-range, low-light, UWOC | UV-NLOS, lab, deep space |
+
+Chapter 4 of Ghassemlooy *et al.* derives the receiver models in full <Cite id="ghassemlooy2019book" />.
+
+<Quiz
+  q="A SPAD has a 10 ns dead time and photons arrive at 200 million per second. Roughly what fraction of them are counted?"
+  options={['About 100 %', 'About 75 %', 'About 33 %', 'About 5 %']}
+  answer={2}
+  explain="λτ = 2×10⁸ × 10⁻⁸ = 2, so the counted rate is λ/(1+2) = λ/3: about a third. This is why SPAD arrays split the light across many diodes."
+/>

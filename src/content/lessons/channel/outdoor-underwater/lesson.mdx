@@ -1,0 +1,65 @@
+## Free-space optics
+
+FSO links are point-to-point laser links: between buildings, from a drone to the ground, between satellites. Ranges run from hundreds of metres to thousands of kilometres. The received power has three multiplicative parts <Cite id="khalighi2014fso" />:
+
+$$
+P_r = P_t \cdot \underbrace{h_\ell}_{\text{weather}} \cdot \underbrace{h_g}_{\text{geometry, pointing}} \cdot \underbrace{h_a}_{\text{turbulence}}.
+$$
+
+### Weather: attenuation
+
+Fog, haze and rain scatter light. The loss follows Beer–Lambert, $h_\ell = e^{-\beta L}$. For fog and haze, a widely used empirical model by Kim *et al.* ties $\beta$ to the **visibility** $V$ <Cite id="kim2001" />:
+
+$$
+\beta = \frac{3.91}{V}\left(\frac{\lambda}{550\,\text{nm}}\right)^{-q}, \qquad q = q(V).
+$$
+
+Clear air costs well under 1 dB/km; dense fog (V below 50 m) can cost over 300 dB/km and stop any link. In thick fog $q \to 0$, so longer wavelengths no longer help.
+
+### Turbulence: scintillation
+
+Sunlight heats the ground and air unevenly, producing refractive-index fluctuations along the path. Their strength is measured by the structure constant $C_n^2$ (about $10^{-17}$ m⁻²ᐟ³ at night high up, about $10^{-13}$ near hot ground at noon). They make the received irradiance twinkle, which is **scintillation**. The path-integrated strength is the **Rytov variance** <Cite id="andrews2005book" />:
+
+$$
+\sigma_R^2 = 1.23\, C_n^2\, k^{7/6} L^{11/6}, \qquad k = 2\pi/\lambda.
+$$
+
+- $\sigma_R^2 \lesssim 1$: weak turbulence; irradiance is log-normal.
+- $\sigma_R^2 \gtrsim 1$: moderate to strong turbulence; the **gamma-gamma** model fits measurements across regimes <Cite id="alhabash2001" />:
+
+$$
+f_I(I) = \frac{2(\alpha\beta)^{(\alpha+\beta)/2}}{\Gamma(\alpha)\Gamma(\beta)} I^{\frac{\alpha+\beta}{2}-1} K_{\alpha-\beta}\!\left(2\sqrt{\alpha\beta I}\right),
+$$
+
+where $\alpha$ and $\beta$ (large- and small-scale eddies) are functions of $\sigma_R^2$, and $K$ is the modified Bessel function.
+
+<TurbulenceLab />
+
+<KeyIdea>
+Attenuation is slow and predictable: you budget a fade margin for it. Turbulence is fast and random: it causes **outages**, with deep fades lasting milliseconds, longer than thousands of bits. Countermeasures are aperture averaging (bigger receiver lens), spatial diversity (several beams or detectors), interleaving with strong codes, and adaptive rates.
+</KeyIdea>
+
+### Pointing
+
+Narrow laser beams must be aimed. Building sway and vibration move the beam spot across the receiver, adding a random **pointing error** loss $h_g$. Satellite and drone links need active beam tracking. Khalighi and Uysal give the standard models <Cite id="khalighi2014fso" />.
+
+## Underwater optical wireless
+
+Radio dies within metres in sea water, and acoustics is slow (kb/s). Blue-green light is the middle ground: tens of metres at Mb/s to Gb/s rates <Cite id="zeng2017uwoc" />.
+
+Water absorbs and scatters light, described by an **absorption** coefficient $a(\lambda)$ and a **scattering** coefficient $b(\lambda)$. Their sum is the extinction coefficient $c = a + b$, and for a collimated beam
+
+$$
+P_r = P_t\, e^{-c(\lambda) L}.
+$$
+
+<UnderwaterLab />
+
+Pure water absorbs least around 420–480 nm. Chlorophyll and dissolved organic matter shift the clearest window towards green in coastal water. The four standard water types (pure sea, clear ocean, coastal, turbid harbour) differ by about a factor of forty in $c$. Scattering also spreads pulses in time and makes the channel less directional, so a wide-FOV receiver can collect scattered light even without perfect alignment. Uysal *et al.* cover UWOC channel modelling, including Monte-Carlo photon tracing <Cite id="uysal2016book" />.
+
+<Quiz
+  q="Doubling an FSO link from 1 km to 2 km multiplies the Rytov variance by about how much?"
+  options={['2×', '2.8×', '3.6×', '4×']}
+  answer={2}
+  explain="σR² ∝ L^(11/6), and 2^(11/6) ≈ 3.56. Turbulence grows faster than linearly with distance."
+/>

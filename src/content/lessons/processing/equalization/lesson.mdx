@@ -1,0 +1,55 @@
+## The receiver's to-do list
+
+After the photodiode and amplifier, the receiver holds a noisy, smeared copy of the transmitted waveform. Recovering the bits takes four steps:
+
+<Steps>
+<li><div><strong>Remove the DC.</strong> AC coupling or a high-pass filter strips the bias and ambient light. Line codes keep this from distorting the data (<LessonLink id="single-carrier" />).</div></li>
+<li><div><strong>Synchronise.</strong> Find where packets start (a known preamble and correlation), then where each symbol's best sampling instant is (clock recovery).</div></li>
+<li><div><strong>Equalise.</strong> Undo inter-symbol interference from the LED bandwidth and multipath.</div></li>
+<li><div><strong>Detect and decode.</strong> Decide on symbols and correct errors (<LessonLink id="detection-coding" />).</div></li>
+</Steps>
+
+## Synchronisation
+
+**Frame sync.** Each packet starts with a preamble: a known sequence with a sharp autocorrelation, such as an m-sequence or Barker code. The receiver cross-correlates the incoming samples against it; the correlation peak marks the frame start and also gives a first estimate of the channel gain.
+
+**Symbol timing.** The transmitter and receiver clocks differ slightly. A timing-recovery loop, for example an early–late gate or a Gardner detector, nudges the sampling phase towards the centre of the eye. Manchester and other run-length-limited codes guarantee the transitions that these loops need.
+
+**OFDM** additionally needs FFT-window alignment (using the cyclic prefix or a preamble) and sampling-frequency offset correction. IM/DD has no optical carrier phase to track, which removes one of radio's hardest synchronisation problems.
+
+## Reading an eye diagram
+
+Overlay many two-symbol windows of the received waveform and you get an **eye**. Its vertical opening is the noise margin; its horizontal opening is the timing margin. ISI closes it from the inside (the traces split into families depending on neighbouring bits), noise thickens the traces, and jitter blurs the crossings.
+
+## Three classic equalisers
+
+Model the band-limited channel as a discrete-time filter, $y_n = \sum_k h_k s_{n-k} + w_n$.
+
+<Compare>
+  <Card title="Zero-forcing (ZF)">Apply the inverse channel $1/H(f)$. ISI disappears completely, but wherever $|H(f)|$ is small the noise is amplified by $1/|H(f)|^2$. For an LED, which is weak at high frequency, ZF boosts high-frequency noise.</Card>
+  <Card title="MMSE / LMS">Choose taps that minimise the mean-square error $E|s_n - \hat s_n|^2$, balancing ISI against noise: $W(f) = H^*(f)/(|H(f)|^2 + \sigma^2/\sigma_s^2)$. The LMS algorithm finds these taps adaptively from a training sequence: $\mathbf w \leftarrow \mathbf w + \mu\, e_n\, \mathbf y_n$.</Card>
+  <Card title="Decision feedback (DFE)">A feed-forward filter shapes the first arrival; a feedback filter subtracts the ISI tail of already-decided symbols. Because the decisions are noise-free (when correct), the tail is removed without boosting noise. Error propagation is the risk.</Card>
+</Compare>
+
+<EqualizerLab />
+
+<Callout type="key" title="Equalisation is how LEDs beat their bandwidth">
+Most VLC records run far above the LED's −3 dB bandwidth. Pre-emphasis at the transmitter (<LessonLink id="drivers-lasers" />) and equalisation at the receiver together recover the attenuated high frequencies, as long as SNR remains there <Cite id="karunatilaka2015" />.
+</Callout>
+
+## OFDM: equalisation becomes trivial
+
+With a cyclic prefix longer than the channel memory, linear convolution becomes circular, and the FFT diagonalises the channel <Cite id="armstrong2009" />:
+
+$$
+Y[k] = H[k]\,X[k] + W[k] \quad\Longrightarrow\quad \hat X[k] = \frac{Y[k]}{\hat H[k]}.
+$$
+
+The channel estimate $\hat H[k]$ comes from pilot symbols. This **one-tap equaliser** is zero-forcing per subcarrier, but because noise on each subcarrier is independent, the "noise enhancement" just shows up as a lower SNR on weak subcarriers, which adaptive bit loading avoids by sending less there. Compare the "Gain only" and "One-tap" settings in the <a href="#/lab">Link Lab</a>.
+
+<Quiz
+  q="A link is limited by a strong LED low-pass response and the receiver is noisy at high frequencies. Which equaliser will usually give the lowest BER?"
+  options={['Zero-forcing', 'No equaliser, just a lower threshold', 'Decision-feedback equaliser', 'A longer zero-forcing filter']}
+  answer={2}
+  explain="ZF inverts the low-pass response and amplifies high-frequency noise. A DFE cancels the post-cursor tail from past decisions without amplifying noise, so it usually wins on steep low-pass channels."
+/>

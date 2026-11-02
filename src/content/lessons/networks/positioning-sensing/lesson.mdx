@@ -1,0 +1,47 @@
+## Lights as beacons
+
+GPS does not work indoors. Visible light positioning (VLP) uses luminaires with known positions as beacons. Each one broadcasts an identifier, and the device estimates its position from what it receives. Indoor VLP regularly reaches centimetre to decimetre accuracy, far better than radio fingerprinting <Cite id="zhuang2018vlp" />.
+
+## Received signal strength (RSS)
+
+For an upward-facing receiver at vertical distance $h$ below a downward-facing LED, the Lambertian model (<LessonLink id="lambertian-channel" />) becomes
+
+$$
+P_r = P_t \frac{(m+1)A\, h^{m+1}}{2\pi\, d^{m+3}} \quad\Longrightarrow\quad d = \left(\frac{P_t (m+1) A\, h^{m+1}}{2\pi P_r}\right)^{\!1/(m+3)},
+$$
+
+and the horizontal range is $r = \sqrt{d^2 - h^2}$. With ranges $r_i$ to three or more LEDs at $(x_i, y_i)$, subtracting the first circle equation from the others gives a **linear** system:
+
+$$
+2(x_i - x_1)x + 2(y_i - y_1)y = r_1^2 - r_i^2 + x_i^2 - x_1^2 + y_i^2 - y_1^2,
+$$
+
+solved by least squares.
+
+<PositioningLab />
+
+## Where the error comes from
+
+- **Measurement noise** in $P_r$: because $d \propto P_r^{-1/(m+3)}$, a 1 dB power error is roughly a 6 % range error for $m=1$.
+- **Device tilt**, which breaks the "facing up" assumption. Inertial sensors can compensate.
+- **Model mismatch**: wrong $m$, wrong height, multipath adding power.
+- **Geometry**: near walls the circles meet at shallow angles, and small range errors become large position errors (geometric dilution of precision).
+
+## Other methods
+
+<Compare>
+  <Card title="Angle of arrival (AoA)">Several tilted photodiodes or a quadrant detector measure the direction to each LED. Less sensitive to power calibration.</Card>
+  <Card title="Camera-based">An image sensor measures where each luminaire appears in the image. With known LED positions, perspective geometry gives position *and* orientation. Very accurate, needs a camera <Cite id="saeed2019occ" />.</Card>
+  <Card title="Fingerprinting">Map RSS patterns in advance and match against them. Handles multipath but needs surveying.</Card>
+</Compare>
+
+## Sensing with light
+
+The same infrastructure can **sense**: occupancy and gestures from changes in reflected light, or the shadows people cast on known links. Joint design of communication, illumination and sensing (integrated sensing and communication, ISAC) is an active research direction for smart buildings and IoT <Cite id="pathak2015survey" /> <Cite id="celik2023iot" />.
+
+<Quiz
+  q="With m = 1, the received power from one LED is measured 1 dB too high. Roughly how does the estimated distance d change?"
+  options={['About 1 % shorter', 'About 6 % shorter', 'About 25 % shorter', 'It does not change']}
+  answer={1}
+  explain="d ∝ Pr^(−1/(m+3)) = Pr^(−1/4). +1 dB is a factor 1.26 in power, and 1.26^(−0.25) ≈ 0.944: about 6 % shorter."
+/>

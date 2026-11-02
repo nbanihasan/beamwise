@@ -1,0 +1,88 @@
+## Two ways to put data on a wave
+
+A radio transmitter controls the **electric field** of its carrier: amplitude *and* phase, which is why radio can use complex constellations like QAM directly. At the receiver, an antenna and a mixer recover that field.
+
+Light is also an electromagnetic wave, but its carrier oscillates at around 500 THz. No practical electronics can follow that field. Practical optical wireless systems therefore use a far simpler scheme, **intensity modulation with direct detection (IM/DD)**:
+
+- the transmitter varies the **instantaneous optical power** $x(t)$ of an LED or laser;
+- the receiver's photodiode produces a current proportional to the **incident power**, ignoring phase entirely.
+
+<KeyIdea>
+In IM/DD the information signal is the optical power itself. Power cannot be negative and has no phase, so the transmitted signal must be **real** and **non-negative**: $x(t) \ge 0$.
+</KeyIdea>
+
+## The IM/DD channel model
+
+Kahn and Barry wrote the baseband model that the whole field uses <Cite id="kahn1997" />:
+
+$$
+y(t) = R\, x(t) \otimes h(t) + n(t)
+$$
+
+| Symbol | Meaning |
+| --- | --- |
+| $x(t)$ | instantaneous transmitted optical power (W) |
+| $h(t)$ | channel impulse response; its DC gain is $H(0) = \int h(t)\,dt$ |
+| $R$ | photodiode responsivity (A/W) |
+| $y(t)$ | photocurrent (A) |
+| $n(t)$ | noise current, usually modelled as signal-independent Gaussian |
+
+It looks like an ordinary linear channel, but with two unusual constraints on the input:
+
+$$
+x(t) \ge 0, \qquad \lim_{T\to\infty} \frac{1}{2T}\int_{-T}^{T} x(t)\,dt = P_{\text{avg}} \le P_{\max}.
+$$
+
+The second constraint, on **average** optical power, comes from eye safety and illumination requirements. In radio, the constraint is on average *electrical* power, $\overline{x^2}$. This changes which modulation formats are efficient: formats with a low duty cycle, such as PPM, become attractive because they concentrate energy into short pulses.
+
+## Bias and clipping
+
+Most information signals, such as a sine wave or an OFDM waveform, are bipolar. To transmit them we add a DC bias $b$ and let the LED clip anything that would go below zero:
+
+$$
+x(t) = \max\big(0,\; b + s(t)\big).
+$$
+
+<ImDdExplorer />
+
+The bias costs power that carries no information. In visible light communication it is free in a sense, because the room needs to be lit anyway, and the bias is the illumination. In infrared links and battery-powered transmitters, it is pure overhead. This tension drives the optical OFDM variants in <LessonLink id="optical-ofdm" />. Armstrong's tutorial develops this in detail <Cite id="armstrong2009" />.
+
+## Electrical vs optical SNR
+
+Because the receiver converts power to current, the **electrical** signal power scales with the *square* of the optical power:
+
+$$
+\text{SNR} = \frac{(R\,P_r)^2}{\sigma_n^2}.
+$$
+
+<MathBox>
+Double the received optical power and the electrical SNR goes up by a factor of four (6 dB), not two. Path loss in optical wireless is therefore twice as painful in electrical dB: a 3 dB optical loss is a 6 dB SNR loss. Textbooks distinguish carefully between the two scales <Cite id="ghassemlooy2019book" />.
+</MathBox>
+
+## Why not coherent detection?
+
+Coherent optical receivers exist and dominate long-haul fibre. They mix the incoming light with a local laser to recover the field. In free space this is hard:
+
+- LEDs are **incoherent**: their spectrum is tens of nanometres wide, so there is no stable phase to track.
+- Coherent detection needs the local oscillator and the signal to overlap in a single spatial mode. Wide-field receivers for mobile users collect light from many spatial modes at once.
+- IM/DD hardware is cheap: an LED, a photodiode and an amplifier.
+
+Some laser-based FSO and satellite links do use coherent detection. For indoor VLC and LiFi, IM/DD is effectively universal <Cite id="karunatilaka2015" />.
+
+## A receiver averages over a huge area
+
+A photodiode is thousands to millions of wavelengths across. This has a welcome side effect. Multipath fading, which plagues radio, mostly averages out: the speckle pattern of optical interference is far smaller than the detector, so the detector sees the sum of powers, not a fluctuating sum of fields. Indoor optical channels therefore show **no small-scale fading**, only slowly varying path loss and dispersion. That is why the channel lessons focus on geometry and delay spread, not Rayleigh statistics.
+
+<Quiz
+  q="An LED transmits 2 W of average optical power. A wall blocks half the light, so the received optical power drops by 3 dB. How much does the electrical SNR drop?"
+  options={['1.5 dB', '3 dB', '6 dB', 'It depends on the modulation']}
+  answer={2}
+  explain="Electrical signal power is proportional to (R·Pr)². Halving Pr quarters the electrical power: a 6 dB drop."
+/>
+
+<Quiz
+  q="Why does an indoor photodiode not experience the fast Rayleigh fading seen in Wi-Fi?"
+  options={['Light does not reflect off walls', 'The detector is much larger than a wavelength, so it averages the interference speckle', 'LED light is polarised', 'Photodiodes are too slow to see fading']}
+  answer={1}
+  explain="Light does reflect, so multipath dispersion exists, but the detector area spans millions of wavelengths² and integrates over the speckle. Only path loss and dispersion remain."
+/>

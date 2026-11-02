@@ -1,0 +1,50 @@
+## Collecting more light
+
+A bigger photodiode collects more light, but it also has more capacitance (slower) and more dark current. Optics offer a better deal: a lens or **concentrator** collects light over a large aperture and funnels it onto a small, fast detector.
+
+There is a hard limit, set by conservation of **étendue** (or radiance): you cannot concentrate light from a wide range of angles into a small area. For an ideal non-imaging concentrator with refractive index $n$ and acceptance half-angle $\Psi_c$ <Cite id="kahn1997" />:
+
+$$
+g(\psi) = \begin{cases} \dfrac{n^2}{\sin^2\Psi_c}, & 0 \le \psi \le \Psi_c \\[0.6em] 0, & \psi > \Psi_c \end{cases}
+$$
+
+A hemispherical lens with $n=1.5$ and a 90° FOV gives $g = 2.25$; narrowing the FOV to 30° raises it to 9. The **compound parabolic concentrator** (CPC) approaches this ideal for one acceptance angle.
+
+<OpticsLab />
+
+## Filtering out the sun
+
+Background light reaches the detector across the whole spectrum, while the signal sits in a narrow band. A **bandpass optical filter** with transmission $T_s(\lambda)$ removes most ambient power (and hence shot noise) while passing the signal. Thin-film interference filters are very selective, but their passband shifts towards shorter wavelengths at oblique incidence, so wide FOVs need wider filters. The blue filter used with phosphor LEDs is a coarse example.
+
+## The transimpedance amplifier
+
+The photocurrent (microamps) must become a voltage. A **transimpedance amplifier** (TIA) does this with a feedback resistor $R_F$: $v_{\text{out}} = -R_F\, i_p$. Three quantities are locked together:
+
+- **Gain** $R_F$: bigger is better for small signals.
+- **Noise**: the resistor contributes $\sqrt{4kT/R_F}$ A/√Hz, so a bigger $R_F$ is *quieter*.
+- **Bandwidth**: with an op-amp of gain-bandwidth product GBW and total input capacitance $C_T$ (photodiode plus amplifier),
+$$
+f_{3\text{dB}} \approx \sqrt{\frac{\text{GBW}}{2\pi R_F C_T}}.
+$$
+A bigger $R_F$ or a bigger photodiode is *slower*.
+
+<Callout type="key">
+The receiver designer's triangle is **area, bandwidth and noise**. Large detectors collect more light but are slow and noisy; optics help collect light without adding capacitance; and $R_F$ trades gain and noise against speed. High-speed LiFi receivers usually pair a small photodiode with a concentrator and a low-capacitance TIA.
+</Callout>
+
+## Beyond a single detector
+
+<Compare>
+  <Card title="Angle-diversity receiver (ADR)">Several photodiodes pointing in different directions, each with a narrow FOV. Select or combine the best branches: higher gain, rejection of interference and ambient light, robustness to device tilt.</Card>
+  <Card title="Imaging receiver">A lens forms an image of the scene on a pixel array. Each luminaire lands on different pixels, which separates transmitters cleanly and enables optical MIMO (<LessonLink id="csk-mimo" />).</Card>
+  <Card title="Camera">An imaging receiver with millions of pixels but a slow frame rate. The subject of the next lesson (<LessonLink id="camera-occ" />).</Card>
+</Compare>
+
+Zeng *et al.* demonstrated imaging receivers for MIMO VLC <Cite id="zeng2009mimo" />. For mobile devices, where tilt dominates the channel statistics, ADRs and multi-detector designs are an active topic <Cite id="soltani2019orientation" />.
+
+<Quiz
+  q="You halve a receiver's FOV from 60° to 30° (n = 1.5). By how much does the ideal concentrator gain change?"
+  options={['It halves', 'It doubles', 'It triples', 'It quadruples']}
+  answer={2}
+  explain="g ∝ 1/sin²Ψc: sin²60° = 0.75 and sin²30° = 0.25, so the gain triples (from 3 to 9). Coverage shrinks accordingly."
+/>

@@ -1,0 +1,60 @@
+## Why OFDM
+
+An LED's low-pass response and multipath dispersion both make the channel **frequency selective**: some frequencies arrive strongly, others weakly. OFDM splits a wide channel into $N$ narrow **subcarriers**, each so narrow that the channel is flat across it. Three consequences make it the modulation behind almost every multi-Gb/s VLC record <Cite id="tsonev2014" /> <Cite id="islim2017" />:
+
+1. Equalisation becomes one complex multiplication per subcarrier ("one-tap").
+2. A cyclic prefix longer than the delay spread removes inter-symbol interference.
+3. Each subcarrier can carry a different constellation, matched to its SNR (**bit loading**). Good subcarriers carry 64-QAM, weak ones 4-QAM or nothing. In wired systems this is called discrete multitone (DMT).
+
+## The problem: OFDM is complex and bipolar
+
+An OFDM transmitter takes QAM symbols $X[k]$ and computes an inverse FFT:
+
+$$
+x[n] = \frac{1}{N}\sum_{k=0}^{N-1} X[k]\, e^{j2\pi kn/N}.
+$$
+
+In radio, the real and imaginary parts drive the I and Q branches of a mixer. An LED has no I and Q, and it cannot emit negative light (<LessonLink id="im-dd" />). The output must be **real** and then made **non-negative**.
+
+## Step 1: Hermitian symmetry gives a real signal
+
+If the input satisfies
+
+$$
+X[N-k] = X^*[k], \qquad X[0] = X[N/2] = 0,
+$$
+
+then every pair of mirrored terms in the IFFT adds to a real cosine, and $x[n]$ is real. The price: only $N/2 - 1$ of the $N$ subcarriers carry independent data. Optical OFDM has half the spectral efficiency of complex baseband OFDM over the same bandwidth <Cite id="armstrong2009" />.
+
+## Step 2: make it non-negative
+
+<Compare>
+  <Card title="DCO-OFDM">Add a DC bias $B_{DC} = k\sigma_x$ and clip what still goes negative (and the peaks above the LED's maximum). Uses all $N/2-1$ subcarriers. The bias wastes power, and low bias causes clipping noise on every subcarrier.</Card>
+  <Card title="ACO-OFDM">Load data only on **odd** subcarriers. Clipping at zero then causes distortion only on **even** subcarriers, and the odd ones arrive intact at half amplitude <Cite id="armstrong2006aco" />. No bias, very power-efficient, but only $N/4$ data subcarriers.</Card>
+  <Card title="U-OFDM / Flip-OFDM">Send the positive and the flipped negative parts of each symbol in two consecutive blocks; the receiver subtracts them. Same efficiency as ACO, different structure. Enhanced U-OFDM superimposes several streams to recover the lost efficiency <Cite id="tsonev2012uofdm" />.</Card>
+</Compare>
+
+<OfdmBuilder />
+
+<MathBox title="Why ACO clipping is harmless on odd subcarriers">
+Write the clipped signal as $x_c[n] = \tfrac12\big(x[n] + |x[n]|\big)$. With only odd subcarriers loaded, $x[n + N/2] = -x[n]$ (anti-symmetry), so $|x[n]|$ is periodic with period $N/2$. Its spectrum therefore lives only on even subcarriers. The odd subcarriers of $x_c$ are exactly $\tfrac12 X[k]$.
+</MathBox>
+
+## PAPR and clipping
+
+The sum of many independent subcarriers is nearly Gaussian, so its **peak-to-average power ratio** (PAPR) is high, often 10–13 dB. An LED has a limited linear range: peaks get clipped, adding **clipping noise** that spreads across all subcarriers and sets an error floor. Designers choose the bias and the scaling to balance clipping at the bottom (DCO) and the top (saturation) against the SNR. This is one of the central trade-offs in optical OFDM <Cite id="armstrong2009" />.
+
+## A complete OFDM link
+
+Try DCO- and ACO-OFDM end to end in the <a href="#/lab">Link Lab</a>, with an LED, a room, noise and one-tap equalisation. Watch the **SNR per subcarrier** fall with frequency as the LED's response rolls off. Adaptive bit loading would put dense constellations on the left of that plot and sparse ones on the right.
+
+<Callout type="research" title="Records">
+Single GaN µLEDs with bit-loaded OFDM reached 3 Gb/s in 2014 <Cite id="tsonev2014" /> and about 11 Gb/s with a violet µLED in 2017 <Cite id="islim2017" />. Bit loading and pre-equalisation are what push LEDs far beyond their nominal −3 dB bandwidth: usable SNR often extends well past it.
+</Callout>
+
+<Quiz
+  q="An optical OFDM system uses N = 64. How many subcarriers carry independent data in DCO-OFDM and in ACO-OFDM?"
+  options={['64 and 32', '32 and 16', '31 and 16', '31 and 32']}
+  answer={2}
+  explain="Hermitian symmetry leaves N/2 − 1 = 31 for DCO (DC and N/2 unused). ACO uses only the odd ones among those: k = 1, 3, …, 31, which is 16 subcarriers."
+/>

@@ -1,0 +1,70 @@
+## Writing bits in intensity
+
+With IM/DD (<LessonLink id="im-dd" />) the transmitter can only choose *how much* light to send and *when*. Every single-carrier format is a different answer to that question.
+
+<Compare>
+  <Card title="On-off keying (OOK)">Light on for 1, off or dim for 0. One bit per symbol, simple threshold detection. The workhorse of VLC.</Card>
+  <Card title="Pulse-position modulation (L-PPM)">Each symbol is L slots with exactly one pulse; log₂L bits choose its position. Very power-efficient, bandwidth-hungry.</Card>
+  <Card title="Pulse-amplitude modulation (M-PAM)">M intensity levels per symbol: log₂M bits per symbol. Spectrally efficient, needs high SNR and a linear LED.</Card>
+</Compare>
+
+<WaveformLab />
+
+## Power efficiency vs bandwidth efficiency
+
+Kahn and Barry compare IM formats at **equal average optical power** <Cite id="kahn1997" />. Two numbers matter:
+
+- **Power efficiency**: average optical power needed for a target BER at a given bit rate;
+- **Bandwidth efficiency**: bits per second per hertz of bandwidth used.
+
+<MathBox title="Why PPM saves power">
+With L-PPM the pulse is L times taller than the average for the same average power, while the noise in each slot stays the same. A taller pulse is easier to detect. For a given average power, L-PPM needs roughly $\sqrt{L\log_2 L/2}$ times less power than OOK in thermal noise, but its slots are $L/\log_2 L$ times shorter, so it needs that much more bandwidth.
+</MathBox>
+
+| Format | Bits/slot | Relative bandwidth | Power penalty vs OOK |
+| --- | --- | --- | --- |
+| OOK-NRZ | 1 | 1 | 0 dB |
+| OOK-RZ (50 %) | 1 | 2 | −1.5 dB (better) |
+| 4-PPM | 0.5 | 2 | about −3 dB |
+| 16-PPM | 0.25 | 4 | about −7.5 dB |
+| 4-PAM | 2 | 0.5 | about +4.8 dB |
+
+Indoor VLC links usually have plenty of SNR but little LED bandwidth, so they favour bandwidth-efficient formats such as PAM and OFDM. Infrared links with strict eye-safety power limits favour PPM.
+
+## BER curves
+
+<BerCurves />
+
+The horizontal dashed line at $3.8\times10^{-3}$ is a common **forward error correction (FEC) threshold**: a hard-decision code with about 7 % overhead turns that raw BER into essentially error-free output. Systems are therefore often designed to that raw BER rather than $10^{-9}$ (<LessonLink id="detection-coding" />).
+
+## Line codes: DC balance, clocking, flicker
+
+Raw data can contain long runs of 1s or 0s. That causes three problems:
+
+1. **Flicker**: the average brightness drifts at low frequencies the eye can see <Cite id="ieee1789" />.
+2. **Baseline wander**: AC-coupled receivers (which remove ambient DC) lose the threshold.
+3. **Clock recovery**: with no transitions, the receiver loses symbol timing.
+
+**Run-length-limited (RLL) codes** fix all three by guaranteeing transitions and DC balance:
+
+- **Manchester**: each bit becomes a high–low or low–high pair. Perfect DC balance, at twice the bandwidth.
+- **4B6B**: each 4-bit nibble becomes a 6-chip codeword with exactly three 1s. DC-balanced at only 1.5× expansion.
+- **8B10B**: the Ethernet and Fibre Channel classic, 1.25× expansion with bounded running disparity.
+
+IEEE 802.15.7 PHY I uses Manchester with OOK and VPPM, and PHY II uses 4B6B and 8B10B <Cite id="ieee802157" />.
+
+## Dimming
+
+Lights must be dimmable without breaking the link. Two methods:
+
+- **Analogue dimming**: lower the DC bias and swing together. Simple, but colour can shift and the SNR falls.
+- **Digital dimming** with **VPPM** (variable PPM): each bit period carries one pulse, at the start for 0 and the end for 1, and the pulse *width* equals the dimming level. Brightness and data are controlled independently. Alternatively, OOK can be padded with compensation symbols to set the duty cycle.
+
+Karunatilaka *et al.* review modulation and dimming schemes in detail <Cite id="karunatilaka2015" />. Analytical BER derivations for each format are in Chapter 4 of Ghassemlooy *et al.* <Cite id="ghassemlooy2019book" />.
+
+<Quiz
+  q="Your VLC link must deliver 20 Mb/s through an LED with 10 MHz bandwidth, and SNR is plentiful. Which single-carrier format is the natural choice?"
+  options={['16-PPM', 'Manchester OOK', '4-PAM', 'OOK-RZ']}
+  answer={2}
+  explain="Bandwidth is the bottleneck, not power. 4-PAM sends 2 bits per symbol, so 20 Mb/s needs only 10 MBd. PPM, Manchester and RZ all need more bandwidth than plain OOK."
+/>

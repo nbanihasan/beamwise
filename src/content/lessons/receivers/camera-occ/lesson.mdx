@@ -1,0 +1,58 @@
+## A receiver with millions of pixels
+
+Every phone, car and laptop already has a camera. **Optical camera communication** (OCC) uses that image sensor as the receiver. Compared with a photodiode it is slow, but it has two unique strengths <Cite id="saeed2019occ" />:
+
+- **Spatial separation.** Each light source lands on different pixels, so many transmitters can be received at once without interference: natural MIMO.
+- **Ambient-light rejection.** Only the pixels showing the source matter; the rest of the bright scene is ignored.
+
+The catch is speed. A camera samples at its **frame rate**, typically 30–240 frames per second.
+
+## Global shutter: sample per frame
+
+A global-shutter sensor exposes all pixels at the same moment. Each LED is sampled once per frame, so by Nyquist the LED can change at most at half the frame rate, about 15 Hz at 30 fps. That would be visible flicker. Two families work around this:
+
+- **Undersampling** schemes (UFSOOK, UPSOOK) switch the LED at kHz, invisible to the eye, and choose the frequencies so that the *aliased* samples in the camera still differ between symbols.
+- **Screen and 2D-code** links send data in space instead of time: many LEDs or a display, with one bit per light per frame.
+
+## Rolling shutter: one row at a time
+
+Most CMOS sensors read rows **sequentially**: row $r$ starts exposing $t_{\text{row}}$ later than row $r-1$, with $t_{\text{row}}$ of about 10–30 µs. Danakis *et al.* showed in 2012 that this turns a single frame into a fast time-series <Cite id="danakis2012" />. An LED switching at frequency $f$ paints **stripes** across the image, each
+
+$$
+w = \frac{1}{2 f\, t_{\text{row}}} \ \text{rows wide (per half period)}.
+$$
+
+<RollingShutter />
+
+<KeyIdea>
+Rolling shutter turns the row readout into a sampler running at $1/t_{\text{row}}$, which is tens of kHz instead of 30 Hz. The LED can then blink well above the flicker threshold while each photo still holds dozens of bits.
+</KeyIdea>
+
+### What limits it
+
+- **Exposure time.** Each row integrates light over its exposure; if that spans several bits, stripes blur together. OCC apps lock the exposure as short as possible.
+- **Source size in the image.** Only rows that show the LED carry data. At a distance the lamp covers few rows, so fewer bits fit per frame. Large luminaires and diffusers help.
+- **Inter-frame gap.** Between frames, the sensor is not reading, and data sent then is lost. Protocols repeat packets or add sequence numbers.
+- **Camera control.** Automatic gain and white balance fight the decoder; fixed ISO and exposure are essential.
+
+## Standardisation
+
+IEEE 802.15.7-2018 added three OCC physical layers <Cite id="ieee802157" />: **PHY IV** (undersampling and screen-based schemes for global shutter), **PHY V** (rolling-shutter schemes, including rolling-shutter FSK and camera on-off keying), and **PHY VI** (screen and multi-LED 2D codes). Cahyadi *et al.* give a modern tutorial on OCC modulation choices <Cite id="cahyadi2020occ" />.
+
+## Where OCC fits
+
+| Use case | Why a camera |
+| --- | --- |
+| Indoor positioning | The camera sees several luminaires at once and measures angles: centimetre-level accuracy |
+| Vehicle-to-everything | Tail-lights and traffic lights talk to the cameras cars already carry |
+| Smart retail and museums | A phone camera pointed at a lamp retrieves a URL |
+| Display-to-camera | Screens carry data invisibly to people |
+
+OCC rates are modest (kb/s to a few Mb/s with high-speed cameras), but the hardware is free and everywhere <Cite id="chowdhury2018" />.
+
+<Quiz
+  q="A rolling-shutter camera has t_row = 20 µs. An LED sends OOK at 5 kb/s. About how many rows does each bit occupy?"
+  options={['1 row', '10 rows', '100 rows', '1000 rows']}
+  answer={1}
+  explain="A bit lasts 200 µs; 200 µs / 20 µs = 10 rows per bit. If the lamp spans 400 rows in the image, one frame carries about 40 bits."
+/>

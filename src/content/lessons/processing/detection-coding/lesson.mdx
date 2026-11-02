@@ -1,0 +1,66 @@
+## Making the decision
+
+After equalisation each symbol is a single number (single-carrier) or a complex point (OFDM). The detector picks the transmitted symbol that most likely produced it.
+
+### Thresholds for OOK and PAM
+
+For equally likely symbols in **signal-independent** Gaussian noise, the maximum-likelihood (ML) threshold sits exactly halfway between levels. For OOK with levels $0$ and $2RP$, the threshold is $RP$, which gives $\text{BER} = Q(\sqrt{\text{SNR}})$ (<LessonLink id="noise-snr" />).
+
+When **shot noise dominates**, the "1" level is noisier than the "0" level. The ML threshold then moves **towards the quieter level**:
+
+$$
+\gamma^{*} \approx \frac{\mu_0\sigma_1 + \mu_1\sigma_0}{\sigma_0 + \sigma_1},
+$$
+
+where $\mu_i$ and $\sigma_i$ are the mean and standard deviation of each level. APD and SPAD receivers, whose noise depends strongly on the signal, gain noticeably from this. Photon-counting receivers use integer count thresholds, as in the SPAD figure in <LessonLink id="photodetectors" />.
+
+### Soft decisions
+
+A hard decision throws away *how sure* the detector was. A **soft** detector outputs a log-likelihood ratio for each bit,
+
+$$
+\text{LLR}(b) = \ln\frac{P(b=0 \mid y)}{P(b=1 \mid y)},
+$$
+
+which for OOK in Gaussian noise is simply proportional to the distance from the threshold. Modern decoders (LDPC, turbo, polar) use LLRs and gain about 2 dB over hard decisions.
+
+## Forward error correction
+
+FEC adds structured redundancy so the receiver can correct errors without retransmission.
+
+| Family | Idea | Where in OWC |
+| --- | --- | --- |
+| Reed–Solomon | Corrects bursts of byte errors | IEEE 802.15.7 outer code |
+| Convolutional + Viterbi | Trellis code, ML sequence decoding | IEEE 802.15.7 inner code (low rates) |
+| LDPC | Sparse parity checks, iterative soft decoding | IEEE 802.11bb (Wi-Fi PHY), G.9991, high-rate links |
+| Interleaving | Spreads bursts so codes see scattered errors | FSO links with turbulence fades |
+
+IEEE 802.15.7 PHY I concatenates an outer Reed–Solomon and an inner convolutional code for robust, low-rate outdoor links <Cite id="ieee802157" />. IEEE 802.11bb reuses Wi-Fi's OFDM and LDPC machinery on infrared light <Cite id="ieee80211bb" />.
+
+<Callout type="key" title="FEC thresholds">
+Research papers often report a raw BER "below the FEC limit", such as $3.8\times10^{-3}$. That is the input BER at which a specific hard-decision code with about 7 % overhead delivers output BER near $10^{-15}$. Net data rate is then the raw rate times the code rate.
+</Callout>
+
+## Capacity: the ceiling
+
+For a bandwidth $B$ and SNR, Shannon's formula $C = B\log_2(1+\text{SNR})$ is the familiar upper bound. For IM/DD with non-negativity, peak and average optical power constraints the exact capacity has no simple closed form. At high SNR it grows like $\tfrac12\log_2(\text{SNR})$ bits per real channel use, the same slope as a real Gaussian channel, minus a constant penalty set by the power constraints. The textbooks give the bounds <Cite id="ghassemlooy2019book" />. Practical systems approach it with bit-loaded OFDM and strong codes.
+
+## The whole chain, once more
+
+You now have every block. The <a href="#/lab">Link Lab</a> runs them all, sample by sample:
+
+<Steps>
+<li><div>PRBS bits → OOK, Manchester, 4-PAM or optical OFDM symbols.</div></li>
+<li><div>DC bias, LED non-linearity and clipping, LED low-pass response.</div></li>
+<li><div>Lambertian LOS gain with FOV and concentrator, plus a diffuse multipath tail.</div></li>
+<li><div>Photodiode responsivity, shot noise from signal and ambient light, amplifier noise.</div></li>
+<li><div>AC coupling, matched filtering, ZF/LMS/DFE or one-tap OFDM equalisation.</div></li>
+<li><div>Decisions, line decoding, bit-error counting.</div></li>
+</Steps>
+
+<Quiz
+  q="An APD receiver's '1' level has three times the noise standard deviation of its '0' level. Where should the optimal threshold sit between the two levels?"
+  options={['Exactly halfway', 'Closer to the 0 level', 'Closer to the 1 level', 'At the 1 level']}
+  answer={1}
+  explain="With γ* ≈ (μ0σ1 + μ1σ0)/(σ0 + σ1) and σ1 = 3σ0, the threshold sits a quarter of the way up from μ0: closer to the quieter '0' level."
+/>

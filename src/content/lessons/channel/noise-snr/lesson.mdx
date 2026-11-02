@@ -1,0 +1,75 @@
+## Where the noise comes from
+
+A photodiode's output contains the signal and three main kinds of noise <Cite id="komine2004" /> <Cite id="kahn1997" />:
+
+<Steps>
+<li><div><strong>Signal shot noise.</strong> Photons and electrons arrive at random times (Poisson statistics), so even a perfectly steady light produces a fluctuating current.</div></li>
+<li><div><strong>Background shot noise.</strong> Sunlight, lamps and other luminaires add a large DC photocurrent $I_{\text{bg}}$. Its DC value is easily removed, but its shot noise is not. Indoors near a window this often dominates.</div></li>
+<li><div><strong>Thermal noise.</strong> Johnson noise of the load or feedback resistor and the amplifier's own input noise. It does not depend on the light at all.</div></li>
+</Steps>
+
+All three are, to a very good approximation, zero-mean, Gaussian and independent, so their **variances add**:
+
+$$
+\sigma^2 = \underbrace{2qR P_r B}_{\text{signal shot}} + \underbrace{2q I_{\text{bg}} B}_{\text{background shot}} + \underbrace{\frac{4kT}{R_F} B}_{\text{thermal}}
+$$
+
+with $q$ the electron charge, $B$ the noise bandwidth, $k$ Boltzmann's constant, $T$ temperature and $R_F$ the transimpedance feedback resistance. Datasheets often quote amplifier noise directly as a current density $i_n$ in pA/√Hz, giving a thermal term $i_n^2 B$.
+
+<Callout type="math" title="Komine's thermal-noise expression">
+Komine and Nakagawa use a fuller model of a FET preamplifier, with feedback-resistor noise and channel noise that grows with photodiode capacitance:
+$$
+\sigma^2_{\text{th}} = \frac{8\pi k T_K}{G}\eta A I_2 B^2 + \frac{16\pi^2 k T_K \Gamma}{g_m}\eta^2 A^2 I_3 B^3
+$$
+Larger detectors (larger $\eta A$, capacitance per area times area) are noisier at high bandwidth. This is one form of the area–bandwidth trade-off explored in <LessonLink id="optics-frontend" />.
+</Callout>
+
+## SNR and bit error rate
+
+With electrical SNR defined as $\text{SNR} = (R P_r)^2/\sigma^2$, on-off keying with a midpoint threshold has
+
+$$
+\text{BER}_{\text{OOK}} = Q\big(\sqrt{\text{SNR}}\big), \qquad Q(x) = \frac{1}{\sqrt{2\pi}}\int_x^\infty e^{-u^2/2}du.
+$$
+
+A BER of $10^{-6}$ needs $\text{SNR} \approx 13.5$ dB; $10^{-9}$ needs about 15.6 dB.
+
+<NoiseBudget />
+
+## Two regimes
+
+Look at the slope of SNR against received optical power in the figure:
+
+- **Thermal-limited** (weak signals): $\sigma^2$ is fixed, so $\text{SNR} \propto P_r^2$: **2 dB per dB**.
+- **Shot-limited** (strong signals or strong ambient light): $\sigma^2 \propto P_r$ or $I_{\text{bg}}$, so SNR rises only **1 dB per dB**, or not at all if background dominates.
+
+Indoor VLC receivers are usually thermal-limited in the dark and background-limited in daylight. That is why optical filters, narrow FOVs and AC coupling are so valuable: they reduce $I_{\text{bg}}$.
+
+## Avalanche gain and its optimum
+
+An avalanche photodiode multiplies the photocurrent by $M$ before the amplifier. The signal power grows as $M^2$ and so does shot noise, but shot noise is also multiplied by the **excess noise factor** $F(M) = k_A M + (1-k_A)(2-1/M)$:
+
+$$
+\text{SNR}_{\text{APD}} = \frac{(M R P_r)^2}{2q(RP_r + I_{\text{bg}})M^2F(M)B + i_n^2 B}.
+$$
+
+At low gain the amplifier noise is beaten down; at high gain the excess noise wins. The optimum $M$ is where they balance, typically 10–100 for silicon. Background light pushes the optimum lower. Detector physics is covered in <LessonLink id="photodetectors" />.
+
+## A link budget in five lines
+
+| Step | Example |
+| --- | --- |
+| Transmit power | 2 W optical → +33 dBm |
+| Channel gain $H(0)$ | $4\times10^{-6}$ → −54 dB |
+| Received power | −21 dBm (8 µW) |
+| Photocurrent | 0.5 A/W × 8 µW = 4 µA |
+| Noise (20 MHz, 5 pA/√Hz, 50 µA ambient) | σ ≈ 29 nA → SNR ≈ 43 dB |
+
+43 dB is far more than OOK needs, which is why VLC links can afford spectrally efficient formats such as 64-QAM OFDM. Pathak *et al.* summarise typical noise conditions in practical deployments <Cite id="pathak2015survey" />.
+
+<Quiz
+  q="A strong link in a dark room: raising the received optical power by 3 dB improves the SNR by only 3 dB, not 6 dB. Why?"
+  options={['The LED is saturated', 'The signal’s own shot noise dominates, and it grows in proportion to the signal', 'Thermal noise doubled', 'The photodiode responsivity dropped']}
+  answer={1}
+  explain="Signal power grows as Pr² (+6 dB), but signal shot noise variance grows as Pr (+3 dB), so the SNR rises by only 3 dB. If thermal or background noise dominated, σ² would stay fixed and the SNR would rise the full 6 dB."
+/>
