@@ -1,0 +1,38 @@
+## The map before the territory
+
+Every lesson in this atlas zooms into one part of a link. This one shows them all at once. A VLC or LiFi link is a chain of **digital** blocks (bits), **analogue** blocks (voltages and currents) and **optical** blocks (light), arranged almost symmetrically: what the transmitter does, the receiver undoes in reverse order <Cite id="ghassemlooy2019book" />.
+
+<ChainWalk />
+
+Step through it with **Next block**. The example sends the two characters "Hi". Along the way an interference burst destroys two adjacent bits, and the interleaver and Hamming decoder repair them. For the full 3D version, with every block as an object you can fly to, open the <a href="#/system">System view</a>.
+
+## The transmitter
+
+<Steps>
+<li><div><strong>Channel encoder (FEC)</strong> adds structured redundancy (<LessonLink id="channel-coding" />).</div></li>
+<li><div><strong>Interleaver</strong> spreads neighbouring bits across codewords so bursts become correctable.</div></li>
+<li><div><strong>Line coder</strong> (Manchester, 4B6B, 8B10B) keeps the average brightness constant and the clock recoverable: no flicker <Cite id="ieee802157" />.</div></li>
+<li><div><strong>Modulator</strong> maps bits to intensity levels, positions or subcarriers (<LessonLink id="single-carrier" />, <LessonLink id="optical-ofdm" />).</div></li>
+<li><div><strong>Pulse shaping and DAC</strong> turn symbols into a smooth, band-limited waveform; pre-equalisation can live here.</div></li>
+<li><div><strong>Driver and bias-T</strong> add the signal to the DC current that sets the lamp's brightness (<LessonLink id="drivers-lasers" />).</div></li>
+<li><div><strong>LED and optics</strong> turn current into light and shape the beam (<LessonLink id="led-physics" />).</div></li>
+</Steps>
+
+## The channel
+
+Line of sight plus reflections, ambient light, and anything that blocks or scatters (<LessonLink id="lambertian-channel" />, <LessonLink id="los-nlos" />, <LessonLink id="channel-impairments" />).
+
+## The receiver
+
+<Steps>
+<li><div><strong>Optical filter and concentrator</strong> reject ambient light and gather signal onto a small detector (<LessonLink id="lens-systems" />).</div></li>
+<li><div><strong>Photodetector</strong> turns light into current (<LessonLink id="receiver-zoo" />).</div></li>
+<li><div><strong>TIA, AGC and ADC</strong> turn microamps into calibrated digital samples (<LessonLink id="optics-frontend" />).</div></li>
+<li><div><strong>Synchronisation</strong> finds frames and the best sampling instant.</div></li>
+<li><div><strong>Equaliser</strong> undoes the LED's slowness and multipath (<LessonLink id="equalization" />, <LessonLink id="ann-equalizers" />).</div></li>
+<li><div><strong>Demodulator, de-interleaver, decoder</strong> recover the bits, then the network stack takes over, with an infrared uplink for acknowledgements and feedback <Cite id="haas2016lifi" />.</div></li>
+</Steps>
+
+<KeyIdea title="Design is choosing one option per block">
+Every block has several variants: OOK or OFDM, PIN or SPAD, RS or LDPC, LMS or a neural network. Designing a link means choosing one per block so that together they meet the rate, range, cost and lighting constraints. The <a href="#/bench">Optical Bench</a> lets you do exactly that and recommends a full chain for your scenario.
+</KeyIdea>

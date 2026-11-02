@@ -126,17 +126,32 @@ export function impulseResponse(
   rho: number,
   patch = 0.1,
   dt = 0.25e-9,
+  /** also reflect off the ceiling (z = H) and floor (z = 0); default: the four walls only */
+  opts: {
+    ceiling?: boolean;
+    floor?: boolean;
+    rhoCeiling?: number;
+    rhoFloor?: number;
+    /** the direct path is obstructed */
+    losBlocked?: boolean;
+    /** a reflection via surface point p is obstructed */
+    blocked?: (p: Vec3) => boolean;
+  } = {},
 ): ImpulseResponse {
   const contributions: { t: number; g: number }[] = [];
-  const los = losGain(tx, rx);
+  const losRaw = losGain(tx, rx);
+  const los = opts.losBlocked ? { ...losRaw, H: 0 } : losRaw;
   if (los.H > 0) contributions.push({ t: los.delay, g: los.H });
 
-  const walls: { origin: Vec3; u: Vec3; v: Vec3; lu: number; lv: number; normal: Vec3 }[] = [
-    { origin: [0, 0, 0], u: [0, 1, 0], v: [0, 0, 1], lu: room.W, lv: room.H, normal: [1, 0, 0] },
-    { origin: [room.L, 0, 0], u: [0, 1, 0], v: [0, 0, 1], lu: room.W, lv: room.H, normal: [-1, 0, 0] },
-    { origin: [0, 0, 0], u: [1, 0, 0], v: [0, 0, 1], lu: room.L, lv: room.H, normal: [0, 1, 0] },
-    { origin: [0, room.W, 0], u: [1, 0, 0], v: [0, 0, 1], lu: room.L, lv: room.H, normal: [0, -1, 0] },
+  type Surface = { origin: Vec3; u: Vec3; v: Vec3; lu: number; lv: number; normal: Vec3; rho: number };
+  const walls: Surface[] = [
+    { origin: [0, 0, 0], u: [0, 1, 0], v: [0, 0, 1], lu: room.W, lv: room.H, normal: [1, 0, 0], rho },
+    { origin: [room.L, 0, 0], u: [0, 1, 0], v: [0, 0, 1], lu: room.W, lv: room.H, normal: [-1, 0, 0], rho },
+    { origin: [0, 0, 0], u: [1, 0, 0], v: [0, 0, 1], lu: room.L, lv: room.H, normal: [0, 1, 0], rho },
+    { origin: [0, room.W, 0], u: [1, 0, 0], v: [0, 0, 1], lu: room.L, lv: room.H, normal: [0, -1, 0], rho },
   ];
+  if (opts.ceiling) walls.push({ origin: [0, 0, room.H], u: [1, 0, 0], v: [0, 1, 0], lu: room.L, lv: room.W, normal: [0, 0, -1], rho: opts.rhoCeiling ?? rho });
+  if (opts.floor) walls.push({ origin: [0, 0, 0], u: [1, 0, 0], v: [0, 1, 0], lu: room.L, lv: room.W, normal: [0, 0, 1], rho: opts.rhoFloor ?? rho });
   const g = rx.n ? concentratorGain(rx.n, rx.fovDeg) : 1;
   const Ts = rx.Ts ?? 1;
   const dA = patch * patch;
@@ -159,8 +174,9 @@ export function impulseResponse(
         const cosBeta = dot(v2, w.normal) / d2;
         const cosPsi = -dot(v2, rx.normal) / d2;
         if (cosBeta <= 0 || cosPsi <= 0 || Math.acos(Math.min(1, cosPsi)) > rad(rx.fovDeg)) continue;
+        if (opts.blocked?.(p)) continue;
         const dH =
-          ((tx.m + 1) * rx.area * rho * dA * Math.pow(cosPhi, tx.m) * cosAlpha * cosBeta * Ts * g * cosPsi) /
+          ((tx.m + 1) * rx.area * w.rho * dA * Math.pow(cosPhi, tx.m) * cosAlpha * cosBeta * Ts * g * cosPsi) /
           (2 * Math.PI * Math.PI * d1 * d1 * d2 * d2);
         contributions.push({ t: (d1 + d2) / PHYS.c, g: dH });
         diffuse += dH;

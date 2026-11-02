@@ -1,0 +1,47 @@
+## Why put optics in front of a photodiode?
+
+A photodiode's speed falls as its area grows (capacitance), but the light it collects grows with area. Optics break that trade-off: a lens or concentrator collects light over a large **entrance aperture** and squeezes it onto a small, fast detector. The price is paid in **field of view (FOV)**.
+
+<LensSystems />
+
+Tilt the incoming light and watch each optic. The **CPC** collects everything up to its acceptance angle and nothing beyond. The **hemisphere** barely changes with angle. The **lens** focuses the light into a spot that walks off the detector.
+
+## The étendue limit
+
+Light can be concentrated, but not without limit. Conservation of étendue (the product of area and solid angle) caps the gain of any passive concentrator with refractive index $n$ and acceptance half-angle $\Psi_c$ at
+
+$$
+g_{\max} = \frac{n^2}{\sin^2 \Psi_c}.
+$$
+
+Halve the FOV from 60° to 30° and the maximum gain rises about 3×. A mobile phone needs a wide FOV, so its concentrator can never be very strong. A fixed FSO terminal can use a narrow FOV and enormous gain. This single equation explains most receiver-optics designs <Cite id="kahn1997" />.
+
+<KeyIdea title="Gain and FOV are one dial">
+Every receiver optic sits somewhere on the curve g ≈ n²/sin²Ψc. Moving along it trades how much light you collect against how far off-axis the transmitter may be.
+</KeyIdea>
+
+## Non-imaging concentrators
+
+<Compare>
+<Card title="CPC (compound parabolic)">Two parabolic mirror walls, each focused on the opposite edge of the exit. Reaches the étendue limit (n²/sin²Ψc) with a sharp cut-off at Ψc. Long for small angles; often made as a dielectric (filled) CPC to gain n².</Card>
+<Card title="Hemispherical lens">A glass hemisphere with the detector at its flat face. Gain about n² (≈ 2.3 for glass), almost independent of angle up to ~90°. The workhorse wide-FOV concentrator <Cite id="wang2013hemi" />.</Card>
+<Card title="Fresnel lens">A lens collapsed into concentric grooves: flat, light and cheap, a little less efficient than a solid lens. Common in large-aperture FSO and solar receivers.</Card>
+</Compare>
+
+## Imaging optics
+
+A lens **images** the scene: light from different directions lands at different points on the focal plane. A single detector at the focus therefore has a FOV set by its size, $\Psi \approx \arctan(a/f)$. That looks like a bug, but it is the basis of two powerful designs:
+
+- **Imaging receivers.** Put a detector *array* (or a camera) at the focal plane. Each pixel sees its own small patch of the room, so different LEDs, and sunlight, land on different pixels. You get spatial separation for MIMO and ambient rejection for free <Cite id="kahn1998imaging" />. A camera in OCC is exactly this.
+- **Angle-diversity receivers.** Several non-imaging elements, each with a narrow FOV, pointing in different directions. Select or combine the best branch, reject the ones that see a window <Cite id="carruthers2000" />.
+
+## Transmit optics
+
+The same tools work in reverse at the transmitter. **Collimators** and **TIR lenses** narrow an LED's Lambertian beam for spotlights and long links. **Diffusers** widen a laser's beam for eye safety and uniform coverage (see <LessonLink id="surfaces-diffusion" />). A narrower beam raises the Lambertian order $m$ and with it the on-axis gain $(m+1)/2\pi$.
+
+<Quiz
+  q="You replace a 60° FOV CPC with a 30° one on a ceiling-facing receiver. What happens?"
+  options={["Gain doubles and the coverage area is unchanged", "Gain rises about 3× but users far from under the lamp may fall outside the FOV", "Gain falls because less light enters", "Nothing changes; CPC gain is independent of angle"]}
+  answer={1}
+  explain="sin²60° / sin²30° = 0.75 / 0.25 = 3. The receiver now accepts light only within 30° of its axis, so the coverage footprint shrinks."
+/>

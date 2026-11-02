@@ -1,0 +1,81 @@
+## Seven ways to lose a photon
+
+Between the transmitter and the receiver, light can be destroyed, redirected, defocused, steered away or simply spread too thin. Each of these has a different signature in the received signal, so each needs a different fix. The figure below shows them one at a time: every dot is a photon, yellow while it still travels in a straight line, blue to violet once it has been scattered.
+
+<ChannelEffects />
+
+Try **Scattering** with $g = 0.95$ and then $g = 0.1$: with forward-peaked scattering most photons still reach the aperture, just slightly late and slightly off-axis. With isotropic scattering they are gone. Then try **Fog & rain** and drag the visibility below 200 m.
+
+## Absorption: photons destroyed
+
+Molecules absorb photons at wavelengths matching their energy levels, and the energy becomes heat. Over a path of length $L$ with absorption coefficient $a$:
+
+$$
+P(L) = P_0\, e^{-aL}.
+$$
+
+The coefficient depends strongly on wavelength. Water absorbs red and infrared very strongly and blue-green weakly, which is why underwater links use 450–532 nm <Cite id="zeng2017uwoc" />. The atmosphere has transmission windows around 850 nm and 1550 nm, which is why FSO uses those bands <Cite id="khalighi2014fso" />.
+
+## Scattering: photons redirected
+
+Particles change a photon's direction without destroying it. How much and where depends on particle size $r$ relative to wavelength $\lambda$:
+
+<Compare>
+<Card title="Rayleigh (r ≪ λ)">Air molecules. Strength grows as λ⁻⁴: blue scatters far more than red (that is why the sky is blue). Roughly symmetric forward/backward.</Card>
+<Card title="Mie (r ≈ λ)">Fog, haze, plankton, silt. Strongly forward-peaked. The dominant loss in fog and in coastal water.</Card>
+<Card title="Geometric (r ≫ λ)">Rain drops, snow. Roughly wavelength-independent, so moving to 1550 nm does not help in rain.</Card>
+</Compare>
+
+Total extinction is $c = a + b$ (absorption plus scattering). The **phase function** describes where scattered light goes. Simulators usually use the Henyey–Greenstein form with asymmetry $g = \langle\cos\theta\rangle$: $g \approx 0.92$ is typical for ocean water, so most scattering is a small deflection <Cite id="kaushal2016uwoc" />. Scattered light is not lost for good. It arrives later (time dispersion, so ISI) and from wider angles, so a wide field-of-view receiver can collect it. Ultraviolet links even rely on atmospheric scattering to communicate around obstacles <Cite id="xu2008uv" />.
+
+<KeyIdea title="Absorption vs scattering in one sentence">
+Absorption lowers the power. Scattering lowers the power *in the beam* but spreads it in angle and time, so a receiver with a wide FOV can collect part of it back, at the cost of delay spread.
+</KeyIdea>
+
+## Turbulence: beam wander and scintillation
+
+Temperature differences make the refractive index of air (or water) fluctuate in small, moving cells, each a weak lens. Its strength is the structure constant $C_n^2$; its accumulated effect over a path is the **Rytov variance** <Cite id="andrews2005book" />:
+
+$$
+\sigma_R^2 = 1.23\, C_n^2\, k^{7/6} L^{11/6}.
+$$
+
+Two effects matter for communications:
+
+- **Beam wander.** Eddies larger than the beam steer it as a whole. The spot dances around the receiver, as in **Turbulence** above. Worst for uplinks, where turbulence sits next to the transmitter <Cite id="kaushal2017space" />.
+- **Scintillation.** Eddies smaller than the beam make parts of the wavefront interfere, so the spot breaks into speckle and the received power fades by many dB in milliseconds, as in **Scintillation**. The gamma-gamma distribution describes the irradiance from weak to strong turbulence <Cite id="alhabash2001" />.
+
+Fades last about a millisecond, which is millions of bits at Gb/s, so plain FEC cannot ride through them. Mitigations are **aperture averaging** (a receiver larger than the speckle averages it out), **spatial diversity** (several apertures fading independently), **adaptive optics**, and long **interleavers** with strong codes.
+
+## Geometry: divergence and pointing
+
+Every beam spreads with full divergence $\theta$. For a receiver aperture $D$ at range $L$, the captured fraction is roughly
+
+$$
+h_g \approx \left(\frac{D}{w_0 + \theta L}\right)^2 \quad (\le 1).
+$$
+
+A 1 mrad beam is already 1 m wide after 1 km, and a 5 cm aperture then catches only about 0.25 % of the light. Narrowing the beam helps, but then **pointing error** (building sway, vibration, a hovering drone) moves the spot off the receiver. Real systems balance the two: narrow beams with active tracking for long links (satellites use µrad beams with fast steering mirrors), wider beams with no tracking for short ones.
+
+## Weather
+
+Fog is the worst case: droplets about the size of the wavelength sit in the Mie regime and attenuate by tens to hundreds of dB/km. The Kim model links attenuation to visibility $V$ <Cite id="kim2001" />. Rain costs a few to ~20 dB/km, snow more. Because fog barely affects radio and rain barely affects light at short range, **hybrid RF/FSO** links back each other up.
+
+## Summary
+
+| Impairment | What happens to photons | Typical signature | Main mitigations |
+|---|---|---|---|
+| Absorption | destroyed | exponential power loss | choose the wavelength window, more power |
+| Scattering | redirected | power loss + delay spread | wide FOV, equalisation, or use it (UV NLOS) |
+| Beam wander | whole beam steered | slow fades | wider beam, tracking |
+| Scintillation | speckle | fast deep fades | aperture averaging, diversity, interleaved FEC |
+| Divergence | spread out | range-squared loss | collimate, larger receive aperture |
+| Pointing error | miss the aperture | random outages | tracking, wider beam |
+| Fog, rain, snow | Mie / geometric scattering | weather outages | hybrid RF/FSO, site diversity |
+
+<Quiz
+  q="An FSO link drops out for about a millisecond at a time, many times per second, on a hot afternoon, but never in fog-free nights. Which mitigation targets this best?"
+  options={["More transmit power", "A larger receive aperture and an interleaver spanning the fades", "Switching from 1550 nm to 850 nm", "A narrower beam"]}
+  answer={1}
+  explain="Millisecond fades on hot afternoons are scintillation. A larger aperture averages the speckle and a long interleaver spreads each fade over many codewords. Power and wavelength changes do not remove the deep fades, and a narrower beam makes beam wander worse."
+/>

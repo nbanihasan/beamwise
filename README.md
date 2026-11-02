@@ -8,11 +8,14 @@ Lumen Atlas teaches visible light communication (VLC), LiFi, optical camera comm
 
 | | |
 | --- | --- |
-| **19 lessons** in 8 tracks | Foundations → Transmitters → Channel → Receivers → Modulation & Coding → Receiver DSP → Systems & Networks → Research Frontiers |
-| **23 interactive figures** | LED junction physics in 3D, a Lambertian room with a live power map, multipath ray tracing, PIN/APD/SPAD/PMT detectors, rolling-shutter cameras, optical OFDM builder, CSK on the CIE diagram, optical MIMO, turbulence, underwater links, LiFi attocells with handover, visible-light positioning, and more |
-| **Link Lab** | An end-to-end IM/DD link simulator: OOK, Manchester, 4-PAM, DCO- and ACO-OFDM; LED bias, non-linearity and bandwidth; Lambertian channel with a diffuse tail; shot and amplifier noise; ZF, LMS, DFE and one-tap OFDM equalisers; eye diagrams, constellations, spectra, per-subcarrier SNR and BER |
-| **Library** | 47 curated references (IEEE COMST surveys, tutorials, handbooks, landmark papers, IEEE 802.15.7 / 802.11bb / 802.15.13, ITU-T G.9991), each DOI checked |
-| **Simulation engine** | Plain TypeScript in `src/sim/`, deterministic and unit-tested |
+| **27 lessons** in 8 tracks | Foundations → Transmitters → Channel → Receivers → Modulation & Coding → Receiver DSP → Systems & Networks → Research Frontiers, including LOS/NLOS geometry, surfaces and diffusion, channel impairments, lens systems, a receiver zoo, channel coding and neural-network equalisers |
+| **31 interactive figures** | LED physics in 3D, a Lambertian room, multipath, photon-by-photon absorption/scattering/turbulence/scintillation, BRDF lobes, 2D receiver-optics ray tracing (lens, Fresnel, hemisphere, CPC), animated detector cut-aways (PIN, APD, SPAD, SiPM, PMT, CMOS, solar, LED), a Hamming Venn-diagram decoder with coded-BER curves, an MLP equaliser trained in the browser, and more |
+| **Optical Bench** | A 3D lab: choose a scenario (office, NLOS corridor, optical table, screen-to-camera, street V2X, building FSO, underwater, satellite-to-satellite, sandbox), place 35 kinds of component (LEDs, lasers, street lamps, screens; PIN, APD, SPAD, SiPM, PMT, InGaAs, camera, solar cell; mirrors, curved mirrors, retroreflectors, prisms, lenses, diffusers, polarizers, filters, splitters, RIS; walls, people, cars) and get ray tracing, impulse response, link budget, SNR, BER before and after FEC and throughput for any modem chain, plus an advisor that diagnoses the link and recommends a complete design |
+| **System view** | The whole VLC/LiFi link as a 3D object: 19 blocks from data source to sink, each with its job, variants, key equation and the signal at that point |
+| **Use cases** | 13 animated 3D scenes: LiFi office, vehicles and smart streets, satellite laser links, ground-to-space, underwater networks, TV-to-phone, display-to-display, indoor positioning, building-to-building FSO, aircraft cabin, industrial wireless, drone relays, battery-free retroreflective tags |
+| **Link Lab** | An end-to-end IM/DD waveform simulator with eye diagrams, constellations, spectra and BER |
+| **Library** | 80 curated references (IEEE COMST surveys, tutorials, handbooks, landmark papers, standards), each DOI checked against Crossref |
+| **Engines** | Plain TypeScript in `src/sim/` and `src/bench/`, deterministic and unit-tested (46 tests) |
 
 ## Quick start
 
@@ -43,6 +46,9 @@ src/
 ├─ three/                   shared 3D stage, hero scene, colour maps
 ├─ viz/                     canvas plotting and controls
 ├─ mdx/                     components available inside lessons
+├─ bench/                   Optical Bench: catalog, scenarios, ray tracer, link engine, advisor, 3D UI
+├─ arch/                    3D system view: blocks and the signal chain they display
+├─ usecases/                use-case catalogue and their 3D scenes
 ├─ pages/ · shell/          app pages and chrome
 ```
 

@@ -12,6 +12,9 @@ import { Contribute } from '@/pages/Contribute';
 import { NotFound } from '@/pages/NotFound';
 
 const LinkLabPage = lazy(() => import('@/pages/LinkLabPage'));
+const UseCasesPage = lazy(() => import('@/pages/UseCasesPage'));
+const SystemPage = lazy(() => import('@/pages/SystemPage'));
+const BenchPage = lazy(() => import('@/pages/BenchPage'));
 
 export function App() {
   const [paletteOpen, setPaletteOpen] = useState(false);
@@ -46,6 +49,10 @@ export function App() {
             <Route path="/learn" element={<Learn />} />
             <Route path="/learn/:id" element={<LessonPage />} />
             <Route path="/lab" element={<LinkLabPage />} />
+            <Route path="/system" element={<SystemPage />} />
+            <Route path="/bench" element={<BenchPage />} />
+            <Route path="/use-cases" element={<UseCasesPage />} />
+            <Route path="/use-cases/:id" element={<UseCasesPage />} />
             <Route path="/library" element={<Library />} />
             <Route path="/glossary" element={<Glossary />} />
             <Route path="/contribute" element={<Contribute />} />
@@ -53,7 +60,7 @@ export function App() {
           </Routes>
         </Suspense>
       </main>
-      <Footer />
+      {!loc.pathname.startsWith('/bench') && <Footer />}
       {paletteOpen && <CommandPalette onClose={() => setPaletteOpen(false)} />}
     </div>
   );

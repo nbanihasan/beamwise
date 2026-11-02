@@ -166,7 +166,7 @@ export default function AttocellLab() {
     ctx.arc(ux * S, uy * S, 8, 0, Math.PI * 2);
     ctx.fillStyle = onWifi ? '#ffb547' : '#ffffff';
     ctx.fill();
-    ctx.font = '12px JetBrains Mono, monospace';
+    ctx.font = '12px Geist Mono, monospace';
     ctx.fillStyle = '#ffffff';
     ctx.fillText(onWifi ? 'user · WiFi fallback' : `user · AP ${serving + 1}`, ux * S + 12, uy * S - 10);
   }, [map, aps, t, walk, version]);

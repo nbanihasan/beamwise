@@ -31,4 +31,12 @@ export const WIDGETS: Record<string, W> = {
   AttocellLab: w(() => import('./AttocellLab')),
   PositioningLab: w(() => import('./PositioningLab')),
   FrontierMap: w(() => import('./FrontierMap')),
+  ChannelEffects: w(() => import('./ChannelEffects')),
+  SurfaceLab: w(() => import('./SurfaceLab')),
+  LinkGeometries: w(() => import('./LinkGeometries')),
+  LensSystems: w(() => import('./LensSystems')),
+  ReceiverZoo: w(() => import('./ReceiverZoo')),
+  FecLab: w(() => import('./FecLab')),
+  NeuralEqualizer: w(() => import('./NeuralEqualizer')),
+  ChainWalk: w(() => import('./ChainWalk')),
 };

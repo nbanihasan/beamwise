@@ -1,131 +1,144 @@
 /*
-  Lumen Atlas design tokens.
-  Layout concept: an optical bench at night. Ink-dark surfaces, instruments laid out on a grid,
-  and colour that comes from the subject itself: the blue pump and yellow phosphor of a white LED,
-  plus the visible spectrum used to colour-code the curriculum (each track has a wavelength).
-  Dark-first; light theme mirrors every token.
+  Lumen Atlas design tokens: "spectral noir".
+  Near-black space, frosted-glass instruments, hairline borders and one signature: the visible
+  spectrum, used sparingly as light itself (focus rings, active states, beams). Typography pairs a
+  precise grotesk (Geist) with an editorial italic serif (Instrument Serif) for emphasis.
+  Dark-first; the light theme mirrors every token.
 */
 :root {
   color-scheme: dark;
-  --bg: #08090e;
-  --bg-2: #0c0e15;
-  --surface: #11141d;
-  --surface-2: #171b27;
-  --surface-3: #1f2433;
-  --line: #222838;
-  --line-strong: #333b52;
-  --text: #e9ecf3;
-  --text-2: #a7afc3;
-  --text-3: #6f7890;
-  --pump: #6d8dff; /* blue pump LED, links and focus */
-  --pump-soft: rgba(109, 141, 255, 0.14);
-  --phosphor: #ffcf6b; /* yellow phosphor, primary action */
-  --phosphor-ink: #1b1405;
-  --phosphor-soft: rgba(255, 207, 107, 0.13);
-  --good: #4fd6a0;
-  --warn: #ffb547;
-  --bad: #ff6b7d;
-  --plot-grid: rgba(167, 175, 195, 0.09);
-  --plot-axis: rgba(167, 175, 195, 0.34);
-  --c1: #6d8dff;
-  --c2: #ffcf6b;
-  --c3: #4fd6a0;
-  --c4: #ff7aa8;
-  --c5: #b48cff;
-  --c6: #5ad8ff;
-  --glow: rgba(255, 207, 107, 0.35);
-  --shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 20px 50px -24px rgba(0, 0, 0, 0.7);
-  --scene-bg: #07080c;
-  --hero-grad: linear-gradient(92deg, #7a8cff 0%, #5ad8ff 38%, #b6f0a0 62%, #ffcf6b 82%, #ff9a6b 100%);
+  --bg: #040406;
+  --bg-2: #08080c;
+  --surface: rgba(255, 255, 255, 0.035);
+  --surface-2: rgba(255, 255, 255, 0.055);
+  --surface-3: rgba(255, 255, 255, 0.09);
+  --solid: #0c0c11; /* opaque surface for menus and overlays */
+  --line: rgba(255, 255, 255, 0.075);
+  --line-strong: rgba(255, 255, 255, 0.16);
+  --text: #f4f4f6;
+  --text-2: #a3a3ad;
+  --text-3: #66666f;
+  --pump: #8fa6ff; /* links and focus */
+  --pump-soft: rgba(143, 166, 255, 0.12);
+  --phosphor: #ffd27a; /* warm highlight */
+  --phosphor-ink: #140f02;
+  --phosphor-soft: rgba(255, 210, 122, 0.1);
+  --ink: #f4f4f6; /* primary button fill */
+  --ink-text: #050507;
+  --good: #5ee0a8;
+  --warn: #ffbe5c;
+  --bad: #ff6f86;
+  --plot-grid: rgba(255, 255, 255, 0.06);
+  --plot-axis: rgba(255, 255, 255, 0.3);
+  --c1: #8fa6ff;
+  --c2: #ffd27a;
+  --c3: #5ee0a8;
+  --c4: #ff86b0;
+  --c5: #c39bff;
+  --c6: #6fe0ff;
+  --glow: rgba(255, 210, 122, 0.3);
+  --shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset, 0 30px 80px -40px rgba(0, 0, 0, 0.9);
+  --scene-bg: #040406;
+  --spectrum: linear-gradient(90deg, #8b5cf6, #3b82f6 18%, #22d3ee 36%, #4ade80 54%, #facc15 72%, #fb923c 86%, #f43f5e);
+  --hero-grad: linear-gradient(95deg, #b8a4ff 0%, #8fd3ff 35%, #b9f5c8 62%, #ffe08a 82%, #ffad85 100%);
+  --blur: blur(18px) saturate(150%);
 
-  --font-display: 'Bricolage Grotesque', 'Avenir Next', 'Segoe UI', system-ui, sans-serif;
-  --font-body: 'IBM Plex Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Cascadia Code', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --font-display: 'Geist', 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-serif: 'Instrument Serif', 'Iowan Old Style', Georgia, serif;
+  --font-body: 'Geist', 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Geist Mono', 'JetBrains Mono', 'Cascadia Code', ui-monospace, Menlo, monospace;
 
   --step--1: 0.82rem;
   --step-0: 1rem;
   --step-1: 1.2rem;
   --step-2: 1.5rem;
   --step-3: 2rem;
-  --step-4: clamp(2.3rem, 4.6vw, 3.6rem);
-  --step-5: clamp(2.8rem, 7vw, 5.6rem);
+  --step-4: clamp(2.2rem, 4.4vw, 3.5rem);
+  --step-5: clamp(2.9rem, 7.6vw, 6.4rem);
 
-  --r-sm: 6px;
-  --r-md: 10px;
-  --r-lg: 16px;
+  --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 20px;
+  --r-xl: 28px;
   --gutter-l: max(16px, env(safe-area-inset-left, 0px));
   --gutter-r: max(16px, env(safe-area-inset-right, 0px));
-  --header-h: 60px;
+  --header-h: 68px;
 }
 
 @media (prefers-color-scheme: light) {
   :root:not([data-theme='dark']) {
     color-scheme: light;
-    --bg: #f5f6f9;
-    --bg-2: #eef0f5;
-    --surface: #ffffff;
-    --surface-2: #f3f4f8;
-    --surface-3: #e8ebf2;
-    --line: #e1e4ec;
-    --line-strong: #c9cfdc;
-    --text: #10131c;
-    --text-2: #4a5268;
-    --text-3: #7c859b;
-    --pump: #2f55e4;
-    --pump-soft: rgba(47, 85, 228, 0.1);
-    --phosphor: #e29a12;
+    --bg: #f6f6f4;
+    --bg-2: #efefec;
+    --surface: rgba(255, 255, 255, 0.7);
+    --surface-2: rgba(0, 0, 0, 0.035);
+    --surface-3: rgba(0, 0, 0, 0.07);
+    --solid: #ffffff;
+    --line: rgba(10, 10, 20, 0.08);
+    --line-strong: rgba(10, 10, 20, 0.18);
+    --text: #0b0b10;
+    --text-2: #50505c;
+    --text-3: #8a8a95;
+    --pump: #3d55e0;
+    --pump-soft: rgba(61, 85, 224, 0.09);
+    --phosphor: #c98400;
     --phosphor-ink: #ffffff;
-    --phosphor-soft: rgba(226, 154, 18, 0.13);
-    --good: #12925f;
-    --warn: #b86e00;
-    --bad: #d22c48;
-    --plot-grid: rgba(16, 19, 28, 0.07);
-    --plot-axis: rgba(16, 19, 28, 0.32);
-    --c1: #2f55e4;
-    --c2: #d98a00;
-    --c3: #11936a;
-    --c4: #d43f7c;
-    --c5: #7a4fe0;
-    --c6: #0a8fb8;
-    --glow: rgba(226, 154, 18, 0.25);
-    --shadow: 0 1px 2px rgba(16, 19, 28, 0.04), 0 16px 40px -24px rgba(16, 19, 28, 0.25);
-    --scene-bg: #0b0d13;
-    --hero-grad: linear-gradient(92deg, #3d4fe0 0%, #0a8fb8 38%, #1d9a5a 62%, #c97f00 82%, #d4502a 100%);
+    --phosphor-soft: rgba(201, 132, 0, 0.1);
+    --ink: #0b0b10;
+    --ink-text: #ffffff;
+    --good: #11895a;
+    --warn: #b06a00;
+    --bad: #cf2c4a;
+    --plot-grid: rgba(10, 10, 20, 0.06);
+    --plot-axis: rgba(10, 10, 20, 0.3);
+    --c1: #3d55e0;
+    --c2: #c98400;
+    --c3: #11895a;
+    --c4: #cc3d78;
+    --c5: #7848da;
+    --c6: #0a87ad;
+    --glow: rgba(201, 132, 0, 0.22);
+    --shadow: 0 1px 2px rgba(10, 10, 20, 0.04), 0 24px 60px -36px rgba(10, 10, 20, 0.3);
+    --scene-bg: #07070a;
+    --hero-grad: linear-gradient(95deg, #5b3fd6 0%, #1677b8 35%, #18865a 62%, #b97700 82%, #c2461f 100%);
   }
 }
 
 :root[data-theme='light'] {
   color-scheme: light;
-  --bg: #f5f6f9;
-  --bg-2: #eef0f5;
-  --surface: #ffffff;
-  --surface-2: #f3f4f8;
-  --surface-3: #e8ebf2;
-  --line: #e1e4ec;
-  --line-strong: #c9cfdc;
-  --text: #10131c;
-  --text-2: #4a5268;
-  --text-3: #7c859b;
-  --pump: #2f55e4;
-  --pump-soft: rgba(47, 85, 228, 0.1);
-  --phosphor: #e29a12;
+  --bg: #f6f6f4;
+  --bg-2: #efefec;
+  --surface: rgba(255, 255, 255, 0.7);
+  --surface-2: rgba(0, 0, 0, 0.035);
+  --surface-3: rgba(0, 0, 0, 0.07);
+  --solid: #ffffff;
+  --line: rgba(10, 10, 20, 0.08);
+  --line-strong: rgba(10, 10, 20, 0.18);
+  --text: #0b0b10;
+  --text-2: #50505c;
+  --text-3: #8a8a95;
+  --pump: #3d55e0;
+  --pump-soft: rgba(61, 85, 224, 0.09);
+  --phosphor: #c98400;
   --phosphor-ink: #ffffff;
-  --phosphor-soft: rgba(226, 154, 18, 0.13);
-  --good: #12925f;
-  --warn: #b86e00;
-  --bad: #d22c48;
-  --plot-grid: rgba(16, 19, 28, 0.07);
-  --plot-axis: rgba(16, 19, 28, 0.32);
-  --c1: #2f55e4;
-  --c2: #d98a00;
-  --c3: #11936a;
-  --c4: #d43f7c;
-  --c5: #7a4fe0;
-  --c6: #0a8fb8;
-  --glow: rgba(226, 154, 18, 0.25);
-  --shadow: 0 1px 2px rgba(16, 19, 28, 0.04), 0 16px 40px -24px rgba(16, 19, 28, 0.25);
-  --scene-bg: #0b0d13;
-  --hero-grad: linear-gradient(92deg, #3d4fe0 0%, #0a8fb8 38%, #1d9a5a 62%, #c97f00 82%, #d4502a 100%);
+  --phosphor-soft: rgba(201, 132, 0, 0.1);
+  --ink: #0b0b10;
+  --ink-text: #ffffff;
+  --good: #11895a;
+  --warn: #b06a00;
+  --bad: #cf2c4a;
+  --plot-grid: rgba(10, 10, 20, 0.06);
+  --plot-axis: rgba(10, 10, 20, 0.3);
+  --c1: #3d55e0;
+  --c2: #c98400;
+  --c3: #11895a;
+  --c4: #cc3d78;
+  --c5: #7848da;
+  --c6: #0a87ad;
+  --glow: rgba(201, 132, 0, 0.22);
+  --shadow: 0 1px 2px rgba(10, 10, 20, 0.04), 0 24px 60px -36px rgba(10, 10, 20, 0.3);
+  --scene-bg: #07070a;
+  --hero-grad: linear-gradient(95deg, #5b3fd6 0%, #1677b8 35%, #18865a 62%, #b97700 82%, #c2461f 100%);
 }
 
 :root[data-theme='dark'] {

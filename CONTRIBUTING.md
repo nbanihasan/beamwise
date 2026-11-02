@@ -36,6 +36,24 @@ MDX notes: write `\{` or avoid curly braces outside maths; avoid a bare `<` in p
 2. Create `src/widgets/MyFigure.tsx` with a default export. Use `Widget` (frame), `Slider` / `Segmented` / `Toggle` (controls), `Readouts`, `Plot` (2D) and `Stage` (3D) so it matches the rest of the atlas.
 3. Register it in `src/widgets/index.ts`. It is then available in every lesson as `<MyFigure />`.
 
+## Add an Optical Bench component or scenario
+
+- **Component:** add a  in , an entry in  (label, mount, defaults, editable props), its optical behaviour in  () or its detector model in , and a 3D model in  (local +Z = optical axis).
+- **Scenario:** add an entry to  in  with an environment, seed objects, a camera and a challenge. The smoke test in  runs every scenario end to end.
+
+## Add a use case
+
+Add an entry to  and a scene with the same id in , built from . Set  to a scenario id to link it to the Optical Bench.
+
+## Add an Optical Bench component or scenario
+
+- **Component:** add a `Kind` in `src/bench/types.ts`, an entry in `src/bench/catalog.ts` (label, mount, defaults, editable props), its optical behaviour in `buildSurfaces` (`src/bench/tracer.ts`) or its detector model in `src/bench/link.ts`, and a 3D model in `src/bench/BenchModels.tsx` (local +Z is the optical axis).
+- **Scenario:** add an entry to `SCENARIOS` in `src/bench/scenarios.ts` with an environment, seed objects, a camera and a challenge. The smoke test in `src/bench/bench.test.ts` runs every scenario end to end.
+
+## Add a use case
+
+Add an entry to `src/usecases/data.ts` and a scene with the same id in `src/usecases/scenes.tsx`, built from `src/three/kit`. Set `bench` to a scenario id to link it to the Optical Bench.
+
 ## Add a track
 
 Add an entry to `src/content/tracks.ts` (id, title, blurb, a wavelength for its colour, and order), then create `src/content/lessons/<track-id>/`.

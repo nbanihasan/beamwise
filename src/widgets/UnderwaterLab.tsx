@@ -71,7 +71,7 @@ export default function UnderwaterLab() {
     ctx.stroke();
     ctx.setLineDash([]);
     ctx.fillStyle = '#ffcf6b';
-    ctx.font = '11px JetBrains Mono, monospace';
+    ctx.font = '11px Geist Mono, monospace';
     ctx.fillText(`max range ${range.toFixed(0)} m`, Math.min(W - 120, xr + 6), 16);
     ctx.fillStyle = 'rgba(255,255,255,0.6)';
     ctx.fillText('0 m', 4, H - 6);

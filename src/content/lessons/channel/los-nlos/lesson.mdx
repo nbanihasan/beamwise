@@ -1,0 +1,45 @@
+## Two questions classify every link
+
+Kahn and Barry's classic tutorial sorts indoor optical links with two questions <Cite id="kahn1997" />:
+
+1. **Is there a line of sight (LOS)** between transmitter and receiver, or does all the light arrive by reflection (NLOS)?
+2. **How directional are the ends?** A *directed* link has a narrow beam and a narrow field of view; a *non-directed* one has wide ones; a *hybrid* mixes them.
+
+That gives a small family of designs. Switch between them below, then walk the person through the room.
+
+<LinkGeometries />
+
+## The four you meet most
+
+<Compare>
+<Card title="Directed LOS">Narrow beam meets narrow FOV. Highest SNR, smallest delay spread, rejects ambient light, so Gb/s are easy. One hand in the way and the link is gone. Used in FSO and point-to-point infrared.</Card>
+<Card title="Non-directed LOS">Wide beam from the ceiling, wide-FOV receiver. No aiming, reflections soften shadows. Moderate path loss and delay spread. The LiFi downlink.</Card>
+<Card title="Diffuse (NLOS)">The transmitter illuminates the ceiling, which re-radiates like a huge Lambertian source <Cite id="gfeller1979" />. Survives almost any blockage and orientation, but costs 10–20 dB more path loss and has delay spreads of several ns: rates of tens of Mb/s, not Gb/s.</Card>
+<Card title="Tracked">A narrow beam steered toward a moving user. Directed-LOS performance with mobility, at the cost of beam-steering hardware (MEMS mirrors, liquid-crystal or LED-array steering).</Card>
+</Compare>
+
+## What a blocker does
+
+When the person steps into the line of sight, the large first spike in the impulse response vanishes. What remains is the diffuse tail: weaker and spread in time. In a non-directed link that typically costs 10–20 dB, often enough to drop the modulation order but not to lose the link entirely; in a directed link the link is simply gone.
+
+$$
+H_{\text{blocked}}(0) = H_{\text{diff}}(0) \ll H_{\text{LOS}}(0) + H_{\text{diff}}(0)
+$$
+
+<KeyIdea title="The fundamental trade-off">
+Directionality buys SNR and bandwidth and costs robustness. Every practical system picks a point on that curve, then adds tricks to recover what it gave up.
+</KeyIdea>
+
+## Recovering from blockage
+
+- **Overlapping cells.** Several luminaires cover each spot, so blocking one leaves another (LiFi handover, <LessonLink id="lifi-networks" />) <Cite id="haas2016lifi" />.
+- **Angle diversity.** Several narrow-FOV detectors pointing in different directions; select or combine the best (see <LessonLink id="lens-systems" />).
+- **Reconfigurable intelligent surfaces and mirrors.** A wall surface that redirects light around an obstacle creates a controllable NLOS path <Cite id="aboagye2023ris" />. You can try this with a mirror in the <a href="#/bench?scenario=corridor">Optical Bench</a>.
+- **Hybrid RF/optical.** Fall back to Wi-Fi when light is blocked.
+
+<Quiz
+  q="A diffuse link and a non-directed LOS link use the same LED power in the same room. Which statement is true?"
+  options={["The diffuse link has higher SNR because it collects light from the whole ceiling", "The LOS link has lower path loss and lower delay spread, but the diffuse link is more robust to blockage", "Both have the same delay spread because the room is the same", "The diffuse link is immune to ambient light"]}
+  answer={1}
+  explain="Reflection off the ceiling loses most of the power (ρ < 1 and two inverse-square legs) and spreads arrival times, but light arrives from many directions, so no single obstacle can cut it."
+/>

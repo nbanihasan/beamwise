@@ -1,0 +1,46 @@
+## One job, many mechanisms
+
+Every optical receiver turns photons into electrical charge. They differ in **where** the photon is absorbed, **what** happens to the charge it creates, and **how many** electrons come out per photon. Pick a detector below and watch it work: yellow dots are photons, blue are electrons, red are holes.
+
+<ReceiverZoo />
+
+## Linear detectors: PIN and APD
+
+A **PIN** photodiode gives at most one electron per photon. It is linear, cheap and fast when small, and its sensitivity is usually limited by the amplifier's thermal noise, not by the light. An **APD** adds an internal multiplication region: each electron triggers an avalanche of $M$ (10–200) secondary carriers. That lifts the signal above amplifier noise, but the multiplication is random, adding excess noise $F(M) \approx kM + (1-k)(2 - 1/M)$. There is an optimum gain (<LessonLink id="photodetectors" />).
+
+## Photon counters: SPAD and SiPM
+
+Bias a junction *above* breakdown and a single photon triggers a self-sustaining avalanche: a **SPAD** produces a digital click per photon. After each click the diode must be quenched and recharged, and during that **dead time** it is blind. At high photon rates the counts saturate as $\lambda/(1+\lambda\tau)$ and stop being Poisson <Cite id="sarbazi2020" />. A **SiPM** puts hundreds or thousands of SPAD micro-cells in parallel. While some are dead, others still count, which extends the dynamic range enough for Gb/s OOK links <Cite id="ahmed2020sipm" />. Photon counting is the front-runner for photon-starved 6G and underwater links <Cite id="huang2024spc" />.
+
+## The photomultiplier tube
+
+The oldest single-photon detector: a photocathode releases an electron by the photoelectric effect, and a chain of dynodes multiplies it by $10^6$ or more. PMTs offer huge areas and very low dark current, which is why they appear in underwater links <Cite id="zeng2017uwoc" />. The cost is size, fragility, kilovolt supplies and sensitivity to magnetic fields.
+
+## Image sensors
+
+A camera is a grid of small photodiodes with a lens in front: an **imaging receiver**. It separates sources in space (each LED lands on different pixels) but samples slowly, at the frame rate or, with a rolling shutter, at the row rate <Cite id="saeed2019occ" />. **Event cameras** report per-pixel brightness *changes* asynchronously with microsecond latency, an interesting new receiver for OCC <Cite id="gallego2022event" />.
+
+## Unusual receivers
+
+- **Solar cells** collect a huge area of light with no bias, harvest its DC part as power and decode its AC part as data, simultaneously <Cite id="wang2015solar" />.
+- **LEDs** are photodiodes too. An LED responds to light at shorter wavelengths than it emits, so one part can transmit and receive, which is handy for very low-cost bidirectional links <Cite id="dietz2003led" />.
+
+## Choosing
+
+| Detector | Internal gain | Speed | Best at |
+|---|---|---|---|
+| PIN | 1 | MHz – GHz | indoor LiFi, high signal levels |
+| APD | 10–200 | to ~10 GHz | FSO, longer indoor links |
+| SPAD | Geiger (digital) | ≤ 1/dead-time | ultra-weak signals |
+| SiPM | ~10⁶ | Gb/s shown | weak signals, high rates, underwater |
+| PMT | 10⁵–10⁷ | 100s of MHz | very large area, deep water |
+| CMOS camera | — | fps / row rate | OCC, positioning, V2X |
+| Solar cell | 1 | kHz – MHz | self-powered IoT |
+| LED | 1 | kHz – MHz | cheapest bidirectional links |
+
+<Quiz
+  q="An underwater link must work at 50 m in clear ocean water, where very few photons arrive. Which receiver family fits best?"
+  options={["A large-area PIN with a high-gain TIA", "A photon-counting receiver: SiPM or PMT", "A smartphone camera", "A solar cell"]}
+  answer={1}
+  explain="When only a handful of photons arrive per bit, thermal noise swamps a PIN. Photon counters (SiPM, PMT) detect individual photons, so their sensitivity is limited by the photons themselves (and dark counts) instead of the amplifier."
+/>

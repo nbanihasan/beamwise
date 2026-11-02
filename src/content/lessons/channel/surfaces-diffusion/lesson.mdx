@@ -1,0 +1,44 @@
+## Every surface is a secondary transmitter
+
+When light hits a wall, part of it is absorbed and part is re-emitted. **How much** is the reflectance $\rho$; **where it goes** is described by the bidirectional reflectance distribution function, the BRDF $f_r(\omega_i, \omega_o)$: the ratio of radiance leaving in direction $\omega_o$ to irradiance arriving from $\omega_i$. Four idealised shapes cover most real materials:
+
+<SurfaceLab />
+
+<Steps>
+<li><div><strong>Lambertian (matte).</strong> $f_r = \rho/\pi$: equally bright from every viewing angle, whatever the incidence. Plaster, paint, paper, ceiling tiles. This is the model used since the first diffuse infrared system <Cite id="gfeller1979" />.</div></li>
+<li><div><strong>Glossy (Phong).</strong> A lobe around the mirror direction, $\propto \cos^n\alpha$ where $\alpha$ is the angle from the mirror direction <Cite id="phong1975" />. Varnished wood, glazed tiles, brushed metal. Larger $n$ means a tighter lobe.</div></li>
+<li><div><strong>Specular (mirror).</strong> All reflected light leaves at the mirror angle. Glass, polished metal, mirrors. Creates strong, discrete echoes rather than a smooth tail.</div></li>
+<li><div><strong>Retro-reflective.</strong> Light goes back toward the source, whatever the incidence. Road signs, bike reflectors, and battery-free optical tags that blink their reflection back to a lamp <Cite id="li2015retrovlc" />.</div></li>
+</Steps>
+
+Real surfaces mix them. A common simulator model is $f_r = \rho_d/\pi + \rho_s\frac{n+2}{2\pi}\cos^n\alpha$, a Lambertian part plus a Phong lobe.
+
+## What the walls do to the channel
+
+The first-order reflection from a wall patch $dA$ adds a delayed copy of the signal to the impulse response <Cite id="barry1993" />:
+
+$$
+dH = \frac{(m+1)A\,\rho\,dA}{2\pi^2 d_1^2 d_2^2}\cos^m\!\phi\,\cos\alpha\,\cos\beta\,T_s\,g(\psi)\cos\psi .
+$$
+
+So reflectance scales the entire diffuse tail. In the figure, switch from **White plaster** to **Black curtain**: the reflected share of power collapses and the delay spread shrinks, because only the direct path is left. Bright, matte rooms give more coverage and more ISI. Dark rooms give cleaner channels but weaker signals at the cell edge.
+
+<KeyIdea title="Reflectance depends on wavelength">
+A wall that looks white can be a poor reflector in the infrared, and coloured paint reflects some wavelengths far more than others. Ray-traced channel models therefore use measured spectral reflectances per material <Cite id="miramirkhani2015" />. White-LED links see the reflectance weighted by the LED spectrum; IR LiFi uplinks at 850–950 nm see a different room.
+</KeyIdea>
+
+## Diffusers: shaping light on purpose
+
+A **diffuser** is a surface designed to scatter transmitted light: frosted glass, opal acrylic, holographic or engineered diffusers.
+
+- **At the transmitter** a diffuser widens a narrow LED or laser beam into a broad, eye-safe, glare-free pattern. Engineered diffusers can produce a flat-top square footprint that covers a desk evenly, instead of the bright centre and dim edges of a Lambertian source. Laser-based lighting relies on this for eye safety.
+- **At the receiver** a diffuser in front of the detector widens the acceptance angle (helpful for mobile users) but throws away concentrator gain, so less light lands on the photodiode.
+
+In both cases the cost is power density: spreading light over a larger area or solid angle lowers the received power per square metre. You can place diffusers and compare footprints in the <a href="#/bench?scenario=bench">Optical Bench</a>.
+
+<Quiz
+  q="You repaint a LiFi office from white (ρ ≈ 0.8) to dark grey (ρ ≈ 0.2). What happens at a desk directly under a luminaire?"
+  options={["Received power and delay spread both rise", "Received power falls slightly and delay spread falls", "Received power falls a lot because the LOS path depends on wall colour", "Nothing changes; only the LOS path matters"]}
+  answer={1}
+  explain="Under the luminaire the LOS path dominates and is unaffected by paint, so power drops only slightly (the diffuse share shrinks). With fewer strong late echoes, the RMS delay spread falls. At the cell edge, where the diffuse share is bigger, the power loss is larger."
+/>

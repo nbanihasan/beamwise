@@ -21,15 +21,16 @@ export function TopBar({ onSearch }: { onSearch: () => void }) {
       </Link>
       <nav className={`nav ${open ? 'open' : ''}`} aria-label="Main">
         <NavLink to="/learn">Learn</NavLink>
+        <NavLink to="/system">System</NavLink>
+        <NavLink to="/use-cases">Use cases</NavLink>
+        <NavLink to="/bench">Optical Bench</NavLink>
         <NavLink to="/lab">Link Lab</NavLink>
         <NavLink to="/library">Library</NavLink>
-        <NavLink to="/glossary">Glossary</NavLink>
-        <NavLink to="/contribute">Contribute</NavLink>
       </nav>
       <div className="topbar-right">
         <button className="search-btn" type="button" onClick={onSearch} aria-label="Search lessons, terms and papers">
           <IconSearch />
-          <span className="label">Search the atlas</span>
+          <span className="label">Search</span>
           <kbd>{mac ? '⌘' : 'Ctrl'} K</kbd>
         </button>
         <button

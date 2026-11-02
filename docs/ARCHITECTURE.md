@@ -36,14 +36,33 @@ content/lessons/*/*/lesson.mdx ─(lazy glob)──► LessonPage ──► MDXP
 | `src/sim/camera.ts` | Rolling-shutter row integration |
 | `src/sim/color.ts` | CIE 1931 locus, CSK constellations, wavelength-to-RGB |
 | `src/sim/linkSim.ts` | The end-to-end Link Lab simulator |
+| `src/sim/neural.ts` | PAM-4 LED channel, least-squares FIR/DFE/Volterra, a small MLP trained with Adam |
+| `src/bench/types.ts` | Bench state: objects, environment, modem chain, goals (plain JSON: undo, save, share) |
+| `src/bench/catalog.ts` | Every placeable component: category, mount, defaults, editable properties |
+| `src/bench/scenarios.ts` | Scenario presets with environment, seed objects, camera and a challenge |
+| `src/bench/optics.ts` | Spectra, detector responsivities, filters, ambient light, materials, glass dispersion, water and fog optics |
+| `src/bench/tracer.ts` | Ray tracer: next-event estimation for direct, diffuse, scattered and flat-mirror paths; Monte Carlo rays through curved mirrors, lenses, prisms, retroreflectors and RIS; impulse responses; coverage maps; bounce-point search |
+| `src/bench/link.ts` | Link engine: PIN/APD/PMT noise, photon counting, bandwidth and ISI, 17 modulations, 11 FEC models, line codes, 11 equalisers, OFDM bit loading, camera links, scintillation, MIMO, eye safety |
+| `src/bench/advisor.ts` | Diagnosis with one-click fixes and a recommended block-by-block blueprint |
+| `src/arch/` | System-view blocks and a deterministic chain that produces the signal at every block |
+| `src/usecases/` | Use-case data and 3D scenes |
+| `src/three/kit/` | Shared 3D kit: beam shader, photon streams, lighting, scenery and optical-component models |
 
 ## Theming
 
 Colours are CSS custom properties in `src/styles/tokens.css`, dark-first with a full light theme. Canvas plots resolve `var(--token)` colours at draw time and redraw on theme change. 3D scenes use a dark "instrument window" background in both themes, since emitted light reads best on dark.
 
+## Optical Bench physics in one paragraph
+
+Light transport combines two estimators. Next-event estimation adds the exact contribution of every direct path, wall reflection (Lambertian + Phong), scattering event (Henyey–Greenstein in water and fog) and flat-mirror path (image method) to each receiver, with shadow rays that block on opaque objects and attenuate through filters, polarizers (Malus) and splitters. Monte Carlo rays, sampled from each source's Lambertian or Gaussian pattern, follow curved mirrors, thin lenses, refracting prisms (Cauchy dispersion), retroreflectors and RIS panels; they count only when they reach a receiver through such optics, so nothing is counted twice. Each contribution keeps its delay, giving the impulse response and RMS delay spread. The link engine converts photocurrent into SNR and evaluates the chosen chain. Unit tests check the tracer against the closed-form Lambertian LOS gain, the image-source mirror solution, Malus's law and Beer–Lambert attenuation.
+
+## Optical Bench physics in one paragraph
+
+Light transport combines two estimators. Next-event estimation adds the exact contribution of every direct path, wall reflection (Lambertian + Phong), scattering event (Henyey–Greenstein in water and fog) and flat-mirror path (image method) to each receiver, with shadow rays that block on opaque objects and attenuate through filters, polarizers (Malus) and splitters. Monte Carlo rays, sampled from each source's Lambertian or Gaussian pattern, follow curved mirrors, thin lenses, refracting prisms (Cauchy dispersion), retroreflectors and RIS panels; they count only when they reach a receiver through such optics, so nothing is counted twice. Each contribution keeps its delay, giving the impulse response and RMS delay spread. The link engine converts photocurrent into SNR and evaluates the chosen chain. Unit tests check the tracer against the closed-form Lambertian LOS gain, the image-source mirror solution, Malus's law and Beer–Lambert attenuation, and run every scenario end to end.
+
 ## Roadmap ideas
 
-- More lessons: channel coding in depth, UV non-line-of-sight links, OWC security, vehicular VLC, LiFi MAC protocols, SLIPT design, optical RIS optimisation.
+- More lessons: UV non-line-of-sight links, OWC security, vehicular VLC, LiFi MAC protocols, SLIPT design, optical RIS optimisation.
 - A higher-order reflection simulator (Barry's recursive method) running in a Web Worker.
 - Measured LED and photodiode datasets to replace analytical models in figures.
 - Translations (content files are already separated from code).

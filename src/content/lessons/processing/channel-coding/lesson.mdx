@@ -1,0 +1,52 @@
+## Redundancy with structure
+
+A channel encoder takes $k$ information bits and outputs $n > k$ coded bits. The ratio $R = k/n$ is the **code rate**. The extra $n-k$ bits are not random padding: they are chosen so that valid codewords differ from each other in at least $d_{\min}$ positions. A decoder can then correct up to $t = \lfloor (d_{\min}-1)/2 \rfloor$ errors per codeword.
+
+The payoff is **coding gain**: the same bit error rate at a lower SNR. A few dB of coding gain is worth a lot in optical wireless, where every dB of SNR costs LED power, detector area or range.
+
+<FecLab />
+
+## Block codes
+
+**Hamming codes** <Cite id="hamming1950" /> are the simplest: Hamming(7,4) adds 3 parity bits so that three overlapping parity checks (the circles above) pin down any single error. Decoding is a lookup: the **syndrome** $\mathbf{s} = \mathbf{H}\mathbf{r}^\top$ is zero for a valid word and otherwise *equals the column of $\mathbf{H}$ at the error position*.
+
+**Reed–Solomon codes** <Cite id="reed1960" /> work on symbols (usually bytes) instead of bits. RS($n,k$) corrects $(n-k)/2$ wrong *symbols*, and a symbol is wrong whether one or all eight of its bits flipped. That makes RS codes excellent against bursts. IEEE 802.15.7 uses RS codes as the outer code of its PHY I and PHY II modes <Cite id="ieee802157" />.
+
+## Convolutional codes and Viterbi
+
+A convolutional encoder is a shift register: each output bit is a parity of the current and the previous $K-1$ input bits. There are no blocks; the code is a path through a **trellis** of $2^{K-1}$ states. The **Viterbi algorithm** <Cite id="viterbi1967" /> finds the most likely path, and it can use *soft* inputs (how confident each received sample is), worth about 2 dB over hard decisions. The K = 7, rate-½ code with generators (171, 133) octal is the classic; 802.15.7 PHY I uses convolutional inner codes with RS outer codes.
+
+## Iterative codes: near the Shannon limit
+
+<Compare>
+<Card title="Turbo codes (1993)">Two convolutional encoders separated by an interleaver, decoded iteratively by exchanging soft information <Cite id="berrou1993" />. The first practical codes within about 1 dB of capacity.</Card>
+<Card title="LDPC codes (1962, rediscovered 1990s)">Sparse parity-check matrices decoded by belief propagation <Cite id="gallager1962" />. Parallel-friendly hardware; used in Wi-Fi (and thus 802.11bb LiFi), DVB-S2, 5G data channels and ITU-T G.9991 <Cite id="itug9991" />.</Card>
+<Card title="Polar codes (2009)">Provably capacity-achieving by channel polarisation <Cite id="arikan2009" />. With list decoding and a CRC they excel at short blocks; used for 5G control channels.</Card>
+</Compare>
+
+The dashed curves in the figure show the characteristic **waterfall**: almost nothing below a threshold SNR, then a cliff where BER falls by orders of magnitude within a fraction of a dB.
+
+<KeyIdea title="Interleaving turns bursts into scattered errors">
+Optical channels fail in bursts: a hand crossing the beam, a scintillation fade, a lamp flicker. Codes are designed for scattered errors. An **interleaver** shuffles coded bits before transmission, so after de-interleaving a burst is spread across many codewords, each with only an error or two. Watch this happen in blocks 03 and 17 of the <a href="#/system?block=deinterleaver">3D system view</a>.
+</KeyIdea>
+
+## Line codes are not error-correcting codes
+
+**Run-length-limited (RLL) codes** such as Manchester, 4B6B and 8B10B also add redundancy, but for a different purpose: guaranteeing transitions and a constant average brightness so the lamp never visibly flickers and the receiver keeps its clock <Cite id="ieee802157" />. A typical VLC transmitter therefore cascades **FEC → interleaver → RLL line code → modulator**.
+
+## What the standards use
+
+| Standard | FEC | Line code |
+|---|---|---|
+| IEEE 802.15.7 PHY I (OOK/VPPM, outdoor) | RS outer + convolutional inner | Manchester, 4B6B |
+| IEEE 802.15.7 PHY II (indoor, faster) | Reed–Solomon | 4B6B, 8B10B |
+| IEEE 802.15.7 PHY III (CSK) | Reed–Solomon | — |
+| ITU-T G.9991 | LDPC | (OFDM) |
+| IEEE 802.11bb | Wi-Fi LDPC / BCC | (OFDM) |
+
+<Quiz
+  q="A link suffers occasional bursts of ~40 consecutive bit errors. Which design fixes it most efficiently?"
+  options={["A stronger Hamming code", "Reed–Solomon with byte symbols, or any good code with an interleaver deeper than the burst", "Raising the transmit power by 3 dB", "Manchester line coding"]}
+  answer={1}
+  explain="Bursts concentrate errors. RS corrects whole bytes regardless of how many bits in them failed, and an interleaver deeper than the burst spreads it over many codewords. Power does not stop blockage bursts, and line codes do not correct errors."
+/>

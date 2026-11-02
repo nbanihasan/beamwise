@@ -122,3 +122,48 @@ export function Widget({ title, eyebrow = 'Interactive', controls, caption, chil
 }
 
 export const berTone = (ber: number): 'good' | 'warn' | 'bad' => (ber < 1e-6 ? 'good' : ber < 3.8e-3 ? 'warn' : 'bad');
+
+interface SelectProps<T extends string> {
+  label?: ReactNode;
+  value: T;
+  options: { value: T; label: string; group?: string }[];
+  onChange: (v: T) => void;
+}
+
+/** Native dropdown for long option lists (keyboard and screen-reader friendly). */
+export function Select<T extends string>({ label, value, options, onChange }: SelectProps<T>) {
+  const id = useId();
+  const groups = Array.from(new Set(options.map((o) => o.group ?? '')));
+  return (
+    <div className="ctl">
+      {label && (
+        <div className="ctl-row">
+          <label htmlFor={id}>{label}</label>
+        </div>
+      )}
+      <select id={id} className="select" value={value} onChange={(e) => onChange(e.target.value as T)}>
+        {groups.map((g) =>
+          g ? (
+            <optgroup key={g} label={g}>
+              {options
+                .filter((o) => o.group === g)
+                .map((o) => (
+                  <option key={o.value} value={o.value}>
+                    {o.label}
+                  </option>
+                ))}
+            </optgroup>
+          ) : (
+            options
+              .filter((o) => !o.group)
+              .map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))
+          ),
+        )}
+      </select>
+    </div>
+  );
+}

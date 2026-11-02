@@ -1,0 +1,56 @@
+## The problem linear filters cannot solve
+
+In <LessonLink id="equalization" /> we undid ISI with linear filters. That works because a linear channel smears symbols *additively*. But a high-power LED is not linear: its light output **compresses** at high drive current, and in a phosphor LED the slow and fast components respond differently. The received sample then depends on the current and previous symbols in a **non-linear** way, for example
+
+$$
+y_k = a_1 x_k + a_2 x_{k-1} + b_{11} x_k^2 + b_{12} x_k x_{k-1} + \dots + n_k .
+$$
+
+No linear filter can cancel the squared and cross terms. For PAM and OFDM, which use many amplitude levels, that residual distortion sets an error floor no matter how much SNR you add.
+
+<NeuralEqualizer />
+
+Push the **LED non-linearity** slider up and watch the linear FIR's BER stall while Volterra and the neural network keep improving. Then lower the **LED bandwidth** to add memory and see the DFE help. The network is trained in your browser on 3,000 symbols and tested on 6,000 it has never seen.
+
+## Volterra equalisers
+
+A **Volterra series** adds products of past samples to the linear filter:
+
+$$
+\hat{x}_k = w_0 + \sum_i w_i y_{k-i} + \sum_{i \le j} w_{ij}\, y_{k-i} y_{k-j} + \dots
+$$
+
+It is still *linear in its weights*, so it trains by least squares or LMS, and it handles phosphor-LED non-linearity well <Cite id="stepniak2013volterra" />. The catch is size: the number of terms grows quickly with memory and order, so practical Volterra equalisers keep only the few strongest kernels.
+
+## Neural-network equalisers
+
+A neural network learns the mapping from a window of received samples to symbols directly. The simplest, used above, is a **multilayer perceptron (MLP)**: a layer of weighted sums followed by a non-linearity (tanh), then a softmax over the possible symbols. Trained with gradient descent on known symbols, it can approximate any smooth decision boundary. Variants in the VLC literature include:
+
+- **DNNs with engineered inputs**, such as Gaussian-kernel features, for underwater PAM-8 links <Cite id="chi2018dnn" />.
+- **LSTM** (recurrent) networks that learn long channel memory, used as post-equalisers in high-speed PAM VLC <Cite id="lu2019lstm" />.
+- **CNNs**, which share weights across time like an FIR filter but stack non-linear layers.
+
+<KeyIdea title="What the network really learns">
+A linear equaliser draws straight decision thresholds. A neural equaliser draws curved ones, bent around the shape the LED gives to each constellation level. The extra freedom pays off when the distortion is non-linear and costs nothing to the BER when it is not, but it costs compute, training data and the risk of over-fitting to one channel.
+</KeyIdea>
+
+## Beyond equalisers: end-to-end learning
+
+Treat the whole link (encoder, modulator, channel, demodulator and decoder) as one **autoencoder** and train transmitter and receiver together <Cite id="oshea2017dl" />. In VLC this has produced learned constellations for multi-colour (CSK-like) systems that cope with LED colour crosstalk <Cite id="lee2018dlvlc" />. Learned transceivers are an active 6G research direction <Cite id="chi2020_6g" />.
+
+## Should you use one?
+
+| | Linear / DFE | Volterra | Neural network |
+|---|---|---|---|
+| Handles non-linearity | no | yes (polynomial) | yes (general) |
+| Training | closed-form or LMS | least squares | gradient descent, more data |
+| Complexity per symbol | low | medium–high | medium–high |
+| Adapts on the fly | easily | easily | harder (retraining) |
+| Generalises to new channels | well | well | must be checked |
+
+<Quiz
+  q="A PAM-8 VLC link shows an error floor that does not drop when the SNR is raised, and the floor gets worse as the LED bias current increases. What is the most likely cause, and fix?"
+  options={["Thermal noise; use an APD", "LED non-linearity; add a Volterra or neural-network equaliser (or back off the drive)", "Multipath; narrow the FOV", "Clock jitter; add a better PLL"]}
+  answer={1}
+  explain="A floor that does not respond to SNR points at deterministic distortion, and dependence on drive level points at the LED's compression. Non-linear equalisation (or reducing the modulation depth) removes it."
+/>
