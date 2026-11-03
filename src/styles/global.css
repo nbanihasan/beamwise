@@ -1940,3 +1940,9 @@ select.select {
   color: var(--text-3);
   letter-spacing: 0.02em;
 }
+/* 3D labels (drei <Html>) default to a z-index in the millions. Give every scene its own stacking context
+   so its labels stay inside it and never float over the header, menus, hero text or controls. */
+.scene {
+  isolation: isolate;
+  z-index: 0;
+}

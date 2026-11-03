@@ -192,3 +192,15 @@ describe('linear algebra', () => {
     expect(s[1]).toBeCloseTo(0, 6);
   });
 });
+
+describe('impulse response edge cases', () => {
+  it('stays finite when the emitter lies in a reflecting surface (ceiling LED, ceiling reflections on)', () => {
+    const tx = { pos: [2.5, 2.5, 3] as [number, number, number], normal: [0, 0, -1] as [number, number, number], m: lambertianOrder(60) };
+    const rx = { pos: [3.8, 1.6, 0.85] as [number, number, number], normal: [0, 0, 1] as [number, number, number], area: 1e-4, fovDeg: 70 };
+    const ir = impulseResponse(KOMINE_ROOM, tx, rx, 0.8, 0.2, 0.5e-9, { ceiling: true, floor: true, rhoFloor: 0.2 });
+    expect(Number.isFinite(ir.diffuseGain)).toBe(true);
+    expect(ir.diffuseGain).toBeGreaterThan(0);
+    expect(Number.isFinite(ir.rmsDelay)).toBe(true);
+    expect(Array.from(ir.h).every(Number.isFinite)).toBe(true);
+  });
+});

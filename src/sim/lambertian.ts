@@ -166,14 +166,17 @@ export function impulseResponse(
         ];
         const v1 = sub(p, tx.pos);
         const d1 = norm(v1);
+        // a patch at the emitter itself (e.g. a ceiling LED lying in the ceiling plane) has no defined angle; skip it
+        if (d1 < 1e-9) continue;
         const cosPhi = dot(v1, tx.normal) / d1;
         const cosAlpha = -dot(v1, w.normal) / d1;
-        if (cosPhi <= 0 || cosAlpha <= 0) continue;
+        if (!(cosPhi > 0) || !(cosAlpha > 0)) continue;
         const v2 = sub(rx.pos, p);
         const d2 = norm(v2);
+        if (d2 < 1e-9) continue;
         const cosBeta = dot(v2, w.normal) / d2;
         const cosPsi = -dot(v2, rx.normal) / d2;
-        if (cosBeta <= 0 || cosPsi <= 0 || Math.acos(Math.min(1, cosPsi)) > rad(rx.fovDeg)) continue;
+        if (!(cosBeta > 0) || !(cosPsi > 0) || Math.acos(Math.min(1, cosPsi)) > rad(rx.fovDeg)) continue;
         if (opts.blocked?.(p)) continue;
         const dH =
           ((tx.m + 1) * rx.area * w.rho * dA * Math.pow(cosPhi, tx.m) * cosAlpha * cosBeta * Ts * g * cosPsi) /
