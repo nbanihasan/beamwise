@@ -5,7 +5,11 @@ import { SCENES } from '@/usecases/scenes';
 import { refById, refLink } from '@/content/references';
 import { lessonById } from '@/content/registry';
 import { IconArrow } from '@/shell/Icons';
+import { useMedia } from '@/lib/useMedia';
 import './usecases.css';
+
+/** On portrait phones the scene band is narrow, so pull the camera back along the same line of sight. */
+const PHONE_PULLBACK = 1.7;
 
 /**
  * Use-case gallery: one live 3D scene at a time (so only one WebGL context), a rail to switch between
@@ -17,12 +21,16 @@ export default function UseCasesPage() {
   const uc = useCaseById(id ?? '') ?? USE_CASES[0];
   const idx = USE_CASES.indexOf(uc);
   const Scene = SCENES[uc.id];
+  const narrow = useMedia('(max-width: 600px)');
+  const camera = narrow
+    ? (uc.camera.map((c, i) => uc.target[i] + (c - uc.target[i]) * PHONE_PULLBACK) as [number, number, number])
+    : uc.camera;
   const go = (d: number) => nav(`/use-cases/${USE_CASES[(idx + d + USE_CASES.length) % USE_CASES.length].id}`);
 
   return (
     <div className="uc" style={{ ['--uc' as string]: uc.accent }}>
       <section className="uc-stage">
-        <Stage key={uc.id} height="100%" flush camera={uc.camera} target={uc.target} bloom={1.1} minDistance={0.2} maxDistance={400}>
+        <Stage key={`${uc.id}-${narrow}`} height="100%" flush camera={camera} target={uc.target} bloom={1.1} minDistance={0.2} maxDistance={400}>
           {Scene && <Scene />}
         </Stage>
         <div className="uc-overlay">
