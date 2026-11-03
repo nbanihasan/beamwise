@@ -1,4 +1,4 @@
-# Contributing to Lumen Atlas
+# Contributing to Beamwise
 
 Thank you for helping people learn optical wireless communications. Contributions of every size are welcome: a typo, a better explanation, a new figure, a missing reference, or a whole track.
 

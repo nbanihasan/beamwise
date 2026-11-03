@@ -1,0 +1,43 @@
+## Three jobs a lamp's waveform must do
+
+A modulator decides *which* symbols to send. A **line code** decides how the stream of chips looks on the wire, or here, in the light. For a luminaire it has three jobs that plain NRZ fails:
+
+<Steps>
+1. **Constant brightness.** The average light must not depend on the data, or a run of ones makes the lamp visibly brighter. Flicker below about 200 Hz is also a health concern <Cite id="ieee1789" />.
+2. **Enough transitions.** The receiver recovers its clock from edges. A run of 40 zeros gives it nothing to lock to.
+3. **No energy near DC.** Receivers AC-couple their photodiode to reject sunlight and lamp hum. Low-frequency content in the data is filtered away with it (baseline wander).
+</Steps>
+
+Run-length-limited (**RLL**) codes solve all three by adding structured redundancy. Click the bits below and compare.
+
+<LineCodes />
+
+## The codes
+
+| Code | Chips per bit | Brightness | Longest run | Notes |
+|---|---|---|---|---|
+| NRZ-L | 1 | data-dependent | unbounded | narrowest spectrum, needs scrambling |
+| NRZ-I | 1 | data-dependent | unbounded (zeros) | a 1 is a transition; polarity-free |
+| RZ | 2 | data-dependent | unbounded (zeros) | half-width pulses |
+| **Manchester** | 2 | exactly 50 % | 2 chips | transition in every bit; 802.15.7 PHY I OOK |
+| Differential Manchester | 2 | 50 % | 2 chips | polarity-free Manchester |
+| Miller (delay) | 2 | about 50 % | 4 chips | about half Manchester's bandwidth |
+| **4B6B** | 1.5 | exactly 50 % | 4 chips | 802.15.7 PHY II <Cite id="rajagopal2012" /> |
+| 8B10B | 1.25 | balanced by running disparity | 5 chips | 802.15.7 PHY II high rates, also PCIe and SATA |
+
+Manchester is the textbook choice: each bit becomes a pair of chips, either low-then-high or high-then-low, so every bit has an edge in its middle and every bit is exactly half on. The price is twice the bandwidth, which hurts on a 20 MHz phosphor LED. 4B6B gets the same 50 % brightness for a 1.5× cost by mapping each 4-bit nibble to one of the 6-chip words that contain exactly three ones. 8B10B goes further (1.25×) by tracking a *running disparity* and choosing between two complementary words to keep the long-term average balanced.
+
+<KeyIdea title="Line codes do not correct errors">
+They add redundancy for brightness, clocking and spectrum, not for reliability. A real transmitter cascades **FEC → interleaver → line code → modulator**, and the receiver undoes them in reverse. See the <LessonLink id="channel-coding">channel-coding lesson</LessonLink> for the error-correcting half.
+</KeyIdea>
+
+## Dimming without hurting the data
+
+Lights are dimmed. With OOK, dimming can be done by inserting compensation symbols (idle patterns) at a lower duty cycle, which wastes airtime. **Variable PPM** (VPPM) in 802.15.7 is cleverer: the pulse *width* sets the brightness and its *position* (early or late in the bit) carries the data <Cite id="rajagopal2012" />. Switch the figure to VPPM and change the dimming level: the brightness follows the setting, not the bits.
+
+<Quiz
+  q="A LiFi downlink uses a 20 MHz LED and must keep a constant brightness. Which line code gives the most data rate?"
+  options={["Manchester", "4B6B", "RZ", "NRZ-L without scrambling"]}
+  answer={1}
+  explain="4B6B guarantees exactly 50 % brightness with only 1.5 chips per bit, versus 2 for Manchester. RZ and plain NRZ do not keep the brightness constant."
+/>

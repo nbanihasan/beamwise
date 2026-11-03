@@ -1,6 +1,6 @@
 # Architecture
 
-Lumen Atlas is a static single-page app (React 18, Vite, TypeScript). There is no server: everything, including simulations, runs in the browser, so it can be hosted on GitHub Pages or shipped as one HTML file.
+Beamwise is a static single-page app (React 18, Vite, TypeScript). There is no server: everything, including simulations, runs in the browser, so it can be hosted on GitHub Pages or shipped as one HTML file.
 
 ## Design goals
 

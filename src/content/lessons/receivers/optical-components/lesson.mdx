@@ -1,0 +1,57 @@
+## Light has more than brightness
+
+An IM/DD link only uses the *power* of the light. But a beam also has a **direction**, a **wavelength** and a **polarization**, the direction in which its electric field oscillates. Passive optical components act on these, and many optical wireless tricks come from them: separating colours for WDM, rejecting glare, isolating a laser from its own reflections, and encoding qubits for quantum key distribution.
+
+A general (possibly partly polarized) beam is described by the **Stokes vector** $S = (S_0, S_1, S_2, S_3)$: total power, horizontal-vs-vertical, $+45°$-vs-$-45°$, and right-vs-left circular. Each component is a $4\times4$ **Mueller matrix** $M$, and the output is simply $S_{out} = M\,S_{in}$. The figure below does exactly that.
+
+<PolarizationLab />
+
+## Polarizers
+
+A linear polarizer passes the field component along its axis. For polarized light at angle $\theta$ to that axis, the transmitted power follows **Malus's law**
+
+$$
+P_{out} = P_{in}\cos^2\theta.
+$$
+
+An unpolarized LED loses half its power in the first polarizer. Wire-grid polarizers (fine metal lines, also used in LCD panels), absorbing films and crystal prisms (Glan–Taylor) do the same job with different extinction ratios, power limits and acceptance angles.
+
+## Wave plates
+
+A wave plate is a birefringent crystal: light polarized along its *fast axis* travels faster than along its *slow axis*, so one component is delayed by a retardance $\delta$.
+
+<Compare>
+<Card title="Half-wave plate, δ = π">Rotates linear polarization: with its fast axis at θ it turns linear light at angle α into linear light at 2θ − α. Used to align a laser's polarization to a PBS or modulator.</Card>
+<Card title="Quarter-wave plate, δ = π/2">Converts linear light at 45° to its axes into circular light, and back. With a PBS it makes an optical circulator that separates outgoing from returning light.</Card>
+</Compare>
+
+## Beam splitters
+
+| Type | What it splits by | Typical use |
+|---|---|---|
+| Plate or cube, non-polarizing (NPBS) | power, e.g. 50:50 or 90:10 | monitoring, interferometers, multi-receiver taps |
+| **Polarizing (PBS)** | polarization: H transmitted, V reflected | polarization multiplexing, QKD receivers, isolators |
+| Dichroic mirror | wavelength | WDM, separating an infrared uplink from a visible downlink |
+| Fibre coupler or photonic lantern | modes and power | coupling FSO light into fibre |
+
+A beam splitter divides *power*; it never creates any. A 50:50 splitter feeding two detectors halves the signal at each, which is why splitting is used for diversity or monitoring, not for free gain.
+
+## Isolators and circulators
+
+A **Faraday rotator** turns polarization by 45° in the *same absolute sense* whichever way the light travels (the effect is non-reciprocal, set by a magnetic field). Put it between polarizers at 0° and 45° and forward light passes; light reflected back is rotated a further 45°, arrives at 90° to the first polarizer and is blocked. That is an **optical isolator**, and narrow-linewidth lasers in FSO terminals need one, because back-reflections destabilise them. Try the *Isolator* preset.
+
+## Where these show up in optical wireless
+
+- **Glare and ambient rejection.** Sunlight reflected from water or glass is strongly polarized; a polarizer in front of the receiver removes much of it.
+- **Polarization multiplexing.** Two independent data streams on H and V double a laser link's capacity; a PBS separates them. With LEDs, liquid-crystal polarization modulation drives systems such as POLI <Cite id="chan2017poli" />.
+- **Colour separation.** Dichroic splitters and filters separate the channels of RGB-LED WDM links <Cite id="chun2016wdm" />.
+- **Quantum key distribution.** A BB84 receiver is a 50:50 splitter followed by two PBSs, one preceded by a half-wave plate at 22.5° so it measures the 45° basis <Cite id="bennett1984" />. See the <LessonLink id="quantum-owc">quantum lesson</LessonLink>.
+
+Polarizers, splitters and filters are also available on the <a href="#/bench">Optical Bench</a>: drop one into a scenario and watch the link budget change.
+
+<Quiz
+  q="Unpolarized light passes polarizers at 0°, 45° and 90°. What fraction gets through? And without the middle one?"
+  options={["0 % and 0 %", "12.5 % and 0 %", "25 % and 0 %", "50 % and 25 %"]}
+  answer={1}
+  explain="The first polarizer passes 1/2. Then cos²45° = 1/2 twice gives 1/2 × 1/2 × 1/2 = 1/8 = 12.5 %. Without the 45° polarizer, the crossed pair blocks everything."
+/>

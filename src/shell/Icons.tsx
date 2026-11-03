@@ -45,18 +45,24 @@ export const IconCheck = () => (
   </svg>
 );
 
-/** Brand mark: an LED die emitting a Lambertian lobe. */
+/** Brand mark: an emitter sending a beam, wrapped in spectrum-coloured wireless arcs. */
 export const BrandMark = () => (
   <svg className="brand-mark" viewBox="0 0 32 32" aria-hidden>
     <defs>
-      <linearGradient id="lm-g" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stopColor="#7a8cff" />
-        <stop offset="0.55" stopColor="#5ad8ff" />
-        <stop offset="1" stopColor="#ffcf6b" />
+      <linearGradient id="bw-beam" x1="0" x2="1">
+        <stop offset="0" stopColor="#ffffff" />
+        <stop offset="1" stopColor="#ffd27a" stopOpacity="0.2" />
       </linearGradient>
+      <radialGradient id="bw-glow">
+        <stop offset="0" stopColor="#fff6dc" />
+        <stop offset="1" stopColor="#ffd27a" stopOpacity="0" />
+      </radialGradient>
     </defs>
-    <path d="M16 18C9 18 4.5 11.5 6.2 6.5 9 3 23 3 25.8 6.5 27.5 11.5 23 18 16 18Z" fill="url(#lm-g)" opacity="0.9" />
-    <rect x="11" y="20" width="10" height="4" rx="1.2" fill="#ffcf6b" />
-    <path d="M13 24v4M19 24v4" stroke="#a7afc3" strokeWidth="1.6" strokeLinecap="round" />
+    <circle cx="7" cy="16" r="6.5" fill="url(#bw-glow)" opacity="0.55" />
+    <path d="M7 16H30" stroke="url(#bw-beam)" strokeWidth="1.6" strokeLinecap="round" />
+    <path d="M12.1 9.9A8 8 0 0 1 12.1 22.1" fill="none" stroke="#b49bff" strokeWidth="2.6" strokeLinecap="round" />
+    <path d="M16 5.3A14 14 0 0 1 16 26.7" fill="none" stroke="#5ad8ff" strokeWidth="2.6" strokeLinecap="round" />
+    <path d="M19.2 1.9A19 19 0 0 1 19.2 30.1" fill="none" stroke="#ffcf6b" strokeWidth="2.6" strokeLinecap="round" />
+    <circle cx="7" cy="16" r="2.8" fill="#fff" />
   </svg>
 );

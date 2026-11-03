@@ -24,7 +24,13 @@ A convolutional encoder is a shift register: each output bit is a parity of the 
 <Card title="Polar codes (2009)">Provably capacity-achieving by channel polarisation <Cite id="arikan2009" />. With list decoding and a CRC they excel at short blocks; used for 5G control channels.</Card>
 </Compare>
 
-The dashed curves in the figure show the characteristic **waterfall**: almost nothing below a threshold SNR, then a cliff where BER falls by orders of magnitude within a fraction of a dB.
+The dashed curves in the first figure show the characteristic **waterfall**: almost nothing below a threshold SNR, then a cliff where BER falls by orders of magnitude within a fraction of a dB.
+
+## Inside an LDPC decoder
+
+An LDPC code is defined by a sparse parity-check matrix $\mathbf{H}$, drawn as a **Tanner graph**: one node per bit, one per parity check, and an edge wherever $\mathbf{H}$ has a 1. Decoding is local message passing on that graph <Cite id="kschischang2001" />. In Gallager's **bit-flipping** decoder each bit counts how many of its checks fail and the worst offenders flip. In **belief propagation** (here its hardware-friendly min-sum form) bits and checks exchange soft log-likelihood ratios until every check is satisfied. Each node only talks to a few neighbours, so thousands can be updated in parallel, which is why LDPC dominates high-speed standards.
+
+<LdpcTanner />
 
 <KeyIdea title="Interleaving turns bursts into scattered errors">
 Optical channels fail in bursts: a hand crossing the beam, a scintillation fade, a lamp flicker. Codes are designed for scattered errors. An **interleaver** shuffles coded bits before transmission, so after de-interleaving a burst is spread across many codewords, each with only an error or two. Watch this happen in blocks 03 and 17 of the <a href="#/system?block=deinterleaver">3D system view</a>.

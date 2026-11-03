@@ -1,8 +1,8 @@
 {
-  "name": "lumen-atlas",
+  "name": "beamwise",
   "version": "0.1.0",
   "private": true,
-  "description": "Lumen Atlas: an open, interactive, 3D atlas for learning optical wireless communications (VLC, LiFi, OCC, FSO, UWOC) from zero to hero.",
+  "description": "Beamwise: an open, interactive, 3D atlas for learning optical wireless communications (VLC, LiFi, OCC, FSO, UWOC) from zero to hero.",
   "license": "MIT",
   "type": "module",
   "scripts": {

@@ -39,4 +39,10 @@ export const WIDGETS: Record<string, W> = {
   FecLab: w(() => import('./FecLab')),
   NeuralEqualizer: w(() => import('./NeuralEqualizer')),
   ChainWalk: w(() => import('./ChainWalk')),
+  LineCodes: w(() => import('./LineCodes')),
+  LdpcTanner: w(() => import('./LdpcTanner')),
+  PolarizationLab: w(() => import('./PolarizationLab')),
+  QuantumLab: w(() => import('./QuantumLab')),
+  MultipleAccessLab: w(() => import('./MultipleAccessLab')),
+  SmartSurfaceLab: w(() => import('./SmartSurfaceLab')),
 };

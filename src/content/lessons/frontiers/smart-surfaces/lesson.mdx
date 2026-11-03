@@ -1,0 +1,54 @@
+## Programming the channel
+
+Until recently the channel was whatever the room gave you. A **reconfigurable intelligent surface** (RIS) changes that: a panel whose reflection can be programmed to send light where it is needed, to a user behind an obstacle, away from an eavesdropper, or into a darker corner <Cite id="aboagye2023ris" />. In optical wireless there are two families <Cite id="abdelhady2021ris" />: arrays of tiny **mirrors** that physically tilt, and **metasurfaces** that shape the phase of light with sub-wavelength structures.
+
+<SmartSurfaceLab />
+
+## Mirror arrays: MEMS and DMDs
+
+A MEMS (micro-electro-mechanical system) mirror array is a chip of mirrors, each tens to hundreds of micrometres wide, tilted electrostatically. Each mirror obeys the ordinary law of reflection, so tilting it by $\alpha$ turns the reflected beam by $2\alpha$. The array is broadband and works for any polarization; its reach is set by the maximum tilt, and steering takes milliseconds.
+
+A **DMD** (digital micromirror device, the heart of DLP projectors) is a MEMS array whose mirrors have only two states, typically $\pm12°$. It switches in microseconds and holds millions of mirrors, which makes it a superb fast on/off spatial modulator but a poor continuous beam steerer.
+
+## Metasurfaces
+
+A metasurface is a layer of nano-antennas (pillars, slots or patches) much smaller than the wavelength. Each imposes a chosen phase delay $\varphi(x)$ on the light it re-radiates. A phase *gradient* tilts the outgoing wavefront, giving the **generalized Snell law** <Cite id="yu2011metasurface" />:
+
+$$
+\sin\theta_r - \sin\theta_i = \frac{\lambda}{2\pi}\,\frac{d\varphi}{dx}.
+$$
+
+With a suitable gradient the reflection can go almost anywhere, from a flat, thin surface. Two catches: the phase only needs to span $0$ to $2\pi$, so it is wrapped into a sawtooth, and real devices offer only a few phase levels. With $L$ levels the steering efficiency is about $\mathrm{sinc}^2(1/L)$: 41 % at 1 bit, 81 % at 2 bits, 95 % at 3 bits. The rest goes in unwanted directions. Most optical metasurfaces today are fixed at fabrication; electrically tunable ones (phase-change materials, electro-optic layers) are an active research area.
+
+## Liquid crystals
+
+Liquid crystals are rod-shaped molecules whose orientation, and hence refractive index for one polarization, follows an applied voltage. They appear in three roles:
+
+<Compare>
+<Card title="Steering at the transmitter or surface">A voltage gradient across an LC cell makes a tunable prism or lens, steering or focusing a beam by a few degrees with no moving parts <Cite id="ndjiongue2021steer" />.</Card>
+<Card title="At the receiver">An LC layer in front of the photodiode can tune what the receiver collects and concentrate light from the strongest LED: an RIS-based receiver <Cite id="ndjiongue2021lc" />.</Card>
+<Card title="As the modulator">LC shutters and LCD panels modulate reflected light, as in retroreflective and display-to-camera links. Slow (milliseconds) but almost free in power.</Card>
+</Compare>
+
+Liquid-crystal **spatial light modulators** (SLMs) are pixelated versions used in laboratories to shape beams arbitrarily. **Smart glass** (electrochromic or PDLC windows) switches between clear and diffusing or dark, admitting or blocking outdoor light and so changing both the ambient noise and the channel.
+
+## Comparison
+
+| Technology | Steering range | Reconfiguration | Polarization | Main loss |
+|---|---|---|---|---|
+| Fixed mirror | none | — | any | low |
+| MEMS mirror array | twice the tilt, e.g. ±20° | 0.1–10 ms | any | fill factor |
+| DMD | two states (±24° beam) | about 10–50 µs | any | fill factor, diffraction |
+| Metasurface | wide | static, or ns–µs if tunable | often one | quantisation, absorption |
+| Liquid crystal | a few degrees | 1–30 ms | one | half of unpolarized light |
+
+<KeyIdea title="An RIS adds a path, it does not create power">
+A surface can only redirect the light that reaches it, and that light has already spread out from the LED. RIS-assisted links shine when LOS is blocked or when a narrow beam must follow a user. Try the <a href="#/bench?scenario=corridor">corridor scenario</a> on the Optical Bench and place an RIS panel at the corner.
+</KeyIdea>
+
+<Quiz
+  q="A 2-bit (4-level) metasurface steers a beam. Roughly what fraction of the reflected light goes in the intended direction?"
+  options={["25 %", "about 41 %", "about 81 %", "100 %"]}
+  answer={2}
+  explain="Efficiency ≈ sinc²(1/L) = (sin(π/4)/(π/4))² ≈ 0.81 for L = 4 levels."
+/>

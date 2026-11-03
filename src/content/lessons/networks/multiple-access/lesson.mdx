@@ -1,0 +1,53 @@
+## One access point, many users
+
+A LiFi luminaire serves every device under it. **Multiple access** is the set of rules that decides who uses which part of the shared resource. The resource can be sliced along time, frequency, code, space, wavelength or power, or users can simply contend for it.
+
+<MultipleAccessLab />
+
+## Orthogonal schemes
+
+<Compare>
+<Card title="TDMA">Users take turns in time slots. Each sees the full LED bandwidth while it transmits. Needs synchronisation; 802.15.7 offers guaranteed time slots <Cite id="ieee802157" />.</Card>
+<Card title="FDMA">Each user gets a frequency band. No timing coordination, but guard bands waste the few tens of MHz an LED offers.</Card>
+<Card title="OFDMA">Users get sets of OFDM subcarriers in each time slot, ideally where their own channel is strongest. LiFi under 802.11bb and G.9991 is OFDM-based <Cite id="ieee80211bb" /> <Cite id="itug9991" />. With IM/DD it must be a real, non-negative OFDM variant such as DCO- or ACO-OFDM.</Card>
+</Compare>
+
+## Codes: optical CDMA
+
+In radio CDMA, users multiply their data by ±1 spreading codes that are mutually orthogonal. Light intensity cannot be negative, so optical CDMA uses **unipolar** on/off codes such as optical orthogonal codes <Cite id="salehi1989" />. Their cross-correlation can be kept small but never zero, so every extra user adds **multiple-access interference**. Codes must also be long (a weight-3 code needs 13 chips to serve just two users with cross-correlation of at most 1), which multiplies the bandwidth. OCDMA is asynchronous and simple, which keeps it attractive for low-rate sensor networks.
+
+## Space and colour
+
+**SDMA** is optical wireless's great advantage. Light does not go through walls and an LED's footprint is a few metres across, so every luminaire can reuse the whole spectrum: these are the **attocells** of LiFi <Cite id="haas2016lifi" />. Users in the same cell share it with TDMA or OFDMA; users at cell edges suffer interference and need coordination or handover. Angle-diversity receivers and steerable beams push the reuse further.
+
+**WDMA** gives each user or stream its own colour. An RGB LED or a set of laser diodes provides several independent channels, separated by colour filters at the receiver <Cite id="chun2016wdm" />, as long as the mix still looks white.
+
+## Power: NOMA
+
+**Non-orthogonal multiple access** superposes users in the *same* time and frequency at different power levels <Cite id="marshoud2016noma" />. The weak user (far from the LED) gets most of the power and decodes its signal treating the other as noise. The strong user first decodes and subtracts the weak user's signal, which it receives with plenty of SNR, and then decodes its own: **successive interference cancellation** (SIC). With power shares $a_1 + a_2 = 1$ and SNRs $\gamma_1 > \gamma_2$:
+
+$$
+R_2 = \log_2\!\left(1 + \frac{a_2\gamma_2}{a_1\gamma_2 + 1}\right), \qquad R_1 = \log_2\left(1 + a_1\gamma_1\right).
+$$
+
+When the two channels are very different, NOMA's rate region lies outside that of time sharing: both users can get more at once. Indoor VLC suits it because the channels are nearly static and well known.
+
+## Contention
+
+**CSMA/CA** needs no scheduler: a device listens, waits a random back-off and transmits. As users grow, collisions waste airtime. Optical uplinks (usually infrared) add a twist: devices often cannot see each other's beams at all, the **hidden node** problem, so the access point has to coordinate.
+
+## In practice
+
+| System | Access |
+|---|---|
+| IEEE 802.15.7 | contention access (CSMA/CA) plus guaranteed time slots |
+| IEEE 802.11bb | OFDM PHY with the Wi-Fi MAC (CSMA/CA, OFDMA in newer amendments) |
+| ITU-T G.9991 | OFDM with a scheduled, TDMA-based MAC across coordinated luminaires |
+| Research | NOMA, SDMA with angle diversity, WDMA, OCDMA |
+
+<Quiz
+  q="Why can't optical CDMA use the same ±1 orthogonal codes as radio CDMA?"
+  options={["Light is too fast", "Intensity cannot be negative, so codes must be unipolar on/off and are only quasi-orthogonal", "LEDs cannot switch fast enough", "Photodiodes cannot detect codes"]}
+  answer={1}
+  explain="With IM/DD the transmitted signal is a non-negative intensity. Unipolar codes always overlap a little, so users interfere with each other."
+/>

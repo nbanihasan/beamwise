@@ -1,0 +1,58 @@
+## Security from physics, not mathematics
+
+Classical encryption is secure because some mathematical problem is believed to be hard. **Quantum key distribution** (QKD) is secure because measuring a quantum state disturbs it. If Alice sends single photons and an eavesdropper (Eve) looks at them, she leaves traces Alice and Bob can detect. The key is then used with ordinary one-time-pad or AES encryption.
+
+Optical wireless is a natural carrier: photons are the qubits, polarization is easy to prepare with the <LessonLink id="optical-components">polarizers and wave plates</LessonLink>, and free space preserves polarization far better than fibre. The detectors are photon counters from the <LessonLink id="receiver-zoo">receiver zoo</LessonLink>, usually SPADs <Cite id="huang2024spc" />.
+
+<QuantumLab />
+
+## BB84
+
+Bennett and Brassard's 1984 protocol <Cite id="bennett1984" /> uses two polarization bases:
+
+<Steps>
+1. Alice picks a random bit and a random basis, + (0° = 0, 90° = 1) or × (45° = 0, 135° = 1), and sends one photon.
+2. Bob measures in a random basis. If it matches, he gets Alice's bit; if not, his result is a coin flip.
+3. Over a public channel they compare *bases only* and keep the matching half: the **sifted key**.
+4. They reveal a sample of it to estimate the quantum bit error rate (**QBER**).
+5. If the QBER is low enough, error correction and **privacy amplification** shrink the key to one Eve knows nothing about.
+</Steps>
+
+Eve must guess the basis too. Half the time she guesses wrong and resends a photon in the wrong basis, and Bob then gets a random result half the time: a 25 % error rate on the sifted key. For the simplest analysis the secret fraction is
+
+$$
+r = 1 - 2\,h(Q), \qquad h(Q) = -Q\log_2 Q - (1-Q)\log_2(1-Q),
+$$
+
+which falls to zero at $Q \approx 11\%$. Above that Alice and Bob abort. Channel loss, by contrast, only reduces the key rate: lost photons carry information to nobody.
+
+## Entanglement and E91
+
+A nonlinear crystal (spontaneous parametric down-conversion) can emit photon pairs in the state
+
+$$
+|\Phi^+\rangle = \tfrac{1}{\sqrt{2}}\left(|HH\rangle + |VV\rangle\right).
+$$
+
+Each photon alone is unpolarized and its measurement is random. But measured with polarizers at angles $a$ and $b$, the two outcomes are correlated as $E(a,b) = \cos 2(a-b)$. Bell showed that no local model of pre-agreed instructions can reproduce this. The CHSH form <Cite id="chsh1969" /> combines four measurements:
+
+$$
+S = \left|E(a,b) - E(a,b') + E(a',b) + E(a',b')\right| \le 2 \quad \text{for any local model},
+$$
+
+while quantum mechanics reaches $2\sqrt{2} \approx 2.83$. Ekert's protocol <Cite id="ekert1991" /> uses some measurements for the key and the rest to check $S$: a violation certifies that the pairs were entangled, so no third party can hold a copy.
+
+## Why satellites?
+
+Photons cannot be amplified without destroying the quantum state, and fibre loses about 0.2 dB/km, so beyond a few hundred kilometres the key rate becomes negligible. Most of a ground-to-space path is vacuum, so the loss is mainly beam spreading. The Micius satellite distributed keys from orbit to ground over up to 1,200 km <Cite id="liao2017micius" /> and later shared entangled pairs between ground stations 1,120 km apart <Cite id="yin2020entangled" />. Daylight background, pointing jitter and turbulence, the same impairments as classical FSO, limit these links.
+
+<Research title="Open problems">
+Daylight QKD (narrow filters and spatial filtering against the Sun), high-rate SPAD arrays, chip-scale sources for handheld devices and drones, and integrating QKD with LiFi access points are active topics.
+</Research>
+
+<Quiz
+  q="During BB84, Alice and Bob measure a QBER of 18 % on their sifted key. What should they do?"
+  options={["Run stronger error correction and continue", "Abort: no secure key can be extracted", "Send more photons to reduce the loss", "Switch to a 50:50 beam splitter"]}
+  answer={1}
+  explain="Above about 11 %, 1 − 2h(Q) is negative: Eve could know as much as Bob, so no amount of processing gives a secret key."
+/>

@@ -1,20 +1,22 @@
-# Lumen Atlas
+<p align="center"><img src="docs/logo.svg" alt="Beamwise" width="300" /></p>
 
-**An open, interactive 3D atlas for learning optical wireless communications, from zero to hero.**
+# Beamwise
 
-Lumen Atlas teaches visible light communication (VLC), LiFi, optical camera communication (OCC), free-space optics (FSO) and underwater optical links (UWOC). Each equation comes with a 3D scene or a live simulation you can change and break. The content follows the field's surveys, tutorials, handbooks and standards, and every lesson cites its sources.
+**Learn optical wireless by playing with light.** Open, interactive 3D courseware for optical wireless communications, from zero to hero.
+
+Beamwise teaches visible light communication (VLC), LiFi, optical camera communication (OCC), free-space optics (FSO) and underwater optical links (UWOC). Each equation comes with a 3D scene or a live simulation you can change and break. The content follows the field's surveys, tutorials, handbooks and standards, and every lesson cites its sources.
 
 ## What's inside
 
 | | |
 | --- | --- |
-| **27 lessons** in 8 tracks | Foundations → Transmitters → Channel → Receivers → Modulation & Coding → Receiver DSP → Systems & Networks → Research Frontiers, including LOS/NLOS geometry, surfaces and diffusion, channel impairments, lens systems, a receiver zoo, channel coding and neural-network equalisers |
-| **31 interactive figures** | LED physics in 3D, a Lambertian room, multipath, photon-by-photon absorption/scattering/turbulence/scintillation, BRDF lobes, 2D receiver-optics ray tracing (lens, Fresnel, hemisphere, CPC), animated detector cut-aways (PIN, APD, SPAD, SiPM, PMT, CMOS, solar, LED), a Hamming Venn-diagram decoder with coded-BER curves, an MLP equaliser trained in the browser, and more |
+| **32 lessons** in 8 tracks | Foundations → Transmitters → Channel → Receivers → Modulation & Coding → Receiver DSP → Systems & Networks → Research Frontiers, including LOS/NLOS geometry, surfaces and diffusion, channel impairments, lens systems, a receiver zoo, channel coding with an LDPC decoder, line codes (Manchester, Miller, 4B6B, VPPM), optical components (splitters, polarizers, wave plates, isolators), multiple access (TDMA, FDMA, OFDMA, OCDMA, SDMA, WDMA, NOMA, CSMA/CA), quantum key distribution and entanglement, smart surfaces (RIS, metasurfaces, MEMS, DMDs, liquid crystals) and neural-network equalisers |
+| **37 interactive figures** | LED physics in 3D, a Lambertian room, multipath, photon-by-photon absorption/scattering/turbulence/scintillation, BRDF lobes, 2D receiver-optics ray tracing (lens, Fresnel, hemisphere, CPC), animated detector cut-aways (PIN, APD, SPAD, SiPM, PMT, CMOS, solar, LED), a Hamming Venn-diagram decoder with coded-BER curves, an MLP equaliser trained in the browser, an LDPC Tanner-graph decoder, a Mueller-calculus polarization rail, a BB84 and Bell-test simulator, a multiple-access resource view with a NOMA rate region, a reconfigurable-surface beam steerer, and more |
 | **Optical Bench** | A 3D lab: choose a scenario (office, NLOS corridor, optical table, screen-to-camera, street V2X, building FSO, underwater, satellite-to-satellite, sandbox), place 35 kinds of component (LEDs, lasers, street lamps, screens; PIN, APD, SPAD, SiPM, PMT, InGaAs, camera, solar cell; mirrors, curved mirrors, retroreflectors, prisms, lenses, diffusers, polarizers, filters, splitters, RIS; walls, people, cars) and get ray tracing, impulse response, link budget, SNR, BER before and after FEC and throughput for any modem chain, plus an advisor that diagnoses the link and recommends a complete design |
 | **System view** | The whole VLC/LiFi link as a 3D object: 19 blocks from data source to sink, each with its job, variants, key equation and the signal at that point |
 | **Use cases** | 13 animated 3D scenes: LiFi office, vehicles and smart streets, satellite laser links, ground-to-space, underwater networks, TV-to-phone, display-to-display, indoor positioning, building-to-building FSO, aircraft cabin, industrial wireless, drone relays, battery-free retroreflective tags |
 | **Link Lab** | An end-to-end IM/DD waveform simulator with eye diagrams, constellations, spectra and BER |
-| **Library** | 80 curated references (IEEE COMST surveys, tutorials, handbooks, landmark papers, standards), each DOI checked against Crossref |
+| **Library** | 92 curated references (IEEE COMST surveys, tutorials, handbooks, landmark papers, standards), each DOI checked against Crossref |
 | **Engines** | Plain TypeScript in `src/sim/` and `src/bench/`, deterministic and unit-tested (46 tests) |
 
 ## Quick start
@@ -71,4 +73,4 @@ Edit `src/content/lessons/channel/my-new-topic/lesson.mdx`. It appears in the cu
 - Code: [MIT](LICENSE)
 - Lesson text and figures: [CC BY 4.0](CONTENT_LICENSE.md)
 
-Cited works belong to their authors and publishers; Lumen Atlas links to them and quotes nothing beyond short attributed facts.
+Cited works belong to their authors and publishers; Beamwise links to them and quotes nothing beyond short attributed facts.
