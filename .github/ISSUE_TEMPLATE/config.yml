@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Suggest through the website (easiest)
+    url: https://photonova.pages.dev/#/suggest
+    about: A short guided form that prepares the issue for you.
+  - name: How to contribute code or lessons
+    url: https://photonova.pages.dev/#/contribute
+    about: Seven steps from fork to pull request.

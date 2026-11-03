@@ -9,6 +9,7 @@ import { LessonPage } from '@/pages/LessonPage';
 import { Library } from '@/pages/Library';
 import { Glossary } from '@/pages/Glossary';
 import { Contribute } from '@/pages/Contribute';
+import { Suggest } from '@/pages/Suggest';
 import { NotFound } from '@/pages/NotFound';
 
 const LinkLabPage = lazy(() => import('@/pages/LinkLabPage'));
@@ -56,6 +57,7 @@ export function App() {
             <Route path="/library" element={<Library />} />
             <Route path="/glossary" element={<Glossary />} />
             <Route path="/contribute" element={<Contribute />} />
+            <Route path="/suggest" element={<Suggest />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

@@ -2,6 +2,22 @@
 
 Thank you for helping people learn optical wireless communications. Contributions of every size are welcome: a typo, a better explanation, a new figure, a missing reference, or a whole track.
 
+## Not a developer?
+
+Use the guided form at **https://photonova.pages.dev/#/suggest**. It turns your correction, idea or bug report into a GitHub issue ready to send. Every lesson also has a *Suggest an edit* button at the bottom.
+
+## The workflow
+
+1. Fork the repository on GitHub.
+2. Clone your fork, then run `npm install` and `npm run dev` (Node.js 20 or newer).
+3. Create a branch: `git checkout -b my-change`.
+4. Make your change (recipes below).
+5. Run `npm run typecheck`, `npm test` and `npm run build`.
+6. Commit, push to your fork, and open a pull request describing what changed and why, with sources for any physics.
+7. A maintainer reviews it. Once merged, the live site updates within minutes.
+
+A step-by-step version with copy-paste commands is at https://photonova.pages.dev/#/contribute.
+
 ## Ground rules
 
 1. **Cite.** Every non-obvious claim and equation should point to a reference in `src/content/references.ts`. Prefer surveys, tutorials, textbooks and standards; give a DOI when one exists.
@@ -35,15 +51,6 @@ MDX notes: write `\{` or avoid curly braces outside maths; avoid a bare `<` in p
 1. Put the model in `src/sim/` and test it.
 2. Create `src/widgets/MyFigure.tsx` with a default export. Use `Widget` (frame), `Slider` / `Segmented` / `Toggle` (controls), `Readouts`, `Plot` (2D) and `Stage` (3D) so it matches the rest of the atlas.
 3. Register it in `src/widgets/index.ts`. It is then available in every lesson as `<MyFigure />`.
-
-## Add an Optical Bench component or scenario
-
-- **Component:** add a  in , an entry in  (label, mount, defaults, editable props), its optical behaviour in  () or its detector model in , and a 3D model in  (local +Z = optical axis).
-- **Scenario:** add an entry to  in  with an environment, seed objects, a camera and a challenge. The smoke test in  runs every scenario end to end.
-
-## Add a use case
-
-Add an entry to  and a scene with the same id in , built from . Set  to a scenario id to link it to the Optical Bench.
 
 ## Add an Optical Bench component or scenario
 

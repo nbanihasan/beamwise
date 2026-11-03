@@ -18,7 +18,8 @@ function readStored(): ThemeChoice {
   } catch {
     /* storage unavailable */
   }
-  return 'system';
+  // Photonova is designed dark-first: first-time visitors get dark; the toggle still offers light and system
+  return 'dark';
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {

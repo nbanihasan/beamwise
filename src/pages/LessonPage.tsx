@@ -146,6 +146,13 @@ export function LessonPage() {
           </section>
         )}
 
+        <aside className="lesson-suggest">
+          <span>Spotted an error, or have an idea for this lesson?</span>
+          <Link to={`/suggest?kind=fix&from=${lesson.id}`} className="btn small">
+            Suggest an edit
+          </Link>
+        </aside>
+
         <nav className="pager" aria-label="Lesson pager">
           {prev ? (
             <Link to={`/learn/${prev.id}`} className="pager-link">

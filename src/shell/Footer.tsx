@@ -33,16 +33,12 @@ export function Footer() {
           </div>
           <div>
             <span className="eyebrow">Project</span>
-            <Link to="/contribute">Add a lesson</Link>
+            <Link to="/suggest">Suggest an improvement</Link>
+            <Link to="/contribute">Contribute</Link>
             {REPO_URL && (
-              <>
-                <a href={REPO_URL} target="_blank" rel="noreferrer">
-                  GitHub
-                </a>
-                <a href={`${REPO_URL}/issues`} target="_blank" rel="noreferrer">
-                  Report an error
-                </a>
-              </>
+              <a href={REPO_URL} target="_blank" rel="noreferrer">
+                GitHub
+              </a>
             )}
           </div>
         </nav>

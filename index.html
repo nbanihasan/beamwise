@@ -10,6 +10,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400..600&family=Instrument+Serif:ital@0;1&display=swap" />
+    <script>
+      // apply the saved theme (dark by default) before first paint, so there is no flash of the light theme
+      (function () {
+        try {
+          var t = localStorage.getItem('lumen.theme');
+          if (t !== 'light' && t !== 'system') t = 'dark';
+          if (t !== 'system') { document.documentElement.setAttribute('data-theme', t); document.documentElement.dataset.lumenSet = '1'; }
+        } catch (e) { document.documentElement.setAttribute('data-theme', 'dark'); }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
