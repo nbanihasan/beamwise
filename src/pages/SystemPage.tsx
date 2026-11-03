@@ -63,7 +63,7 @@ export default function SystemPage() {
   return (
     <div className="sys">
       <section className="sys-stage">
-        <Stage height="100%" flush camera={[-2.2, 7.4, 16.5]} target={[-2.2, 0.2, 2.2]} bloom={1} minDistance={2} maxDistance={60} hint="drag to orbit · click a block · ← → to step">
+        <Stage height="100%" flush camera={[-2.2, 7.4, 16.5]} target={[-2.2, 0.2, 2.2]} bloom={1} minDistance={2} maxDistance={60} hint="click any block to fly to it · ← → to step">
           <ArchScene selected={selected} onSelect={(id) => select(id)} showLabels={labels} />
         </Stage>
 

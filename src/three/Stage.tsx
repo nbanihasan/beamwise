@@ -2,6 +2,7 @@ import { Component, Suspense, useEffect, useRef, useState, type ReactNode } from
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
+import { InteractHint } from './InteractHint';
 
 /**
  * Shared 3D stage. Mounts a WebGL canvas only while the figure is near the viewport, so a lesson
@@ -16,6 +17,7 @@ interface StageProps {
   bloom?: number;
   orbit?: boolean;
   autoRotate?: boolean;
+  /** optional caption in the corner (what the scene shows); the gesture hint is automatic */
   hint?: string | false;
   flush?: boolean;
   minDistance?: number;
@@ -52,7 +54,7 @@ export function Stage({
   bloom = 0.9,
   orbit = true,
   autoRotate = false,
-  hint = 'drag to orbit · scroll to zoom',
+  hint = false,
   flush,
   minDistance = 2,
   maxDistance = 40,
@@ -105,6 +107,7 @@ export function Stage({
       )}
       {overlay}
       {hint && gl && <div className="scene-hint">{hint}</div>}
+      {orbit && gl && visible && <InteractHint target={ref} />}
     </div>
   );
 }

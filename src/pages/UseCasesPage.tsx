@@ -22,7 +22,7 @@ export default function UseCasesPage() {
   return (
     <div className="uc" style={{ ['--uc' as string]: uc.accent }}>
       <section className="uc-stage">
-        <Stage key={uc.id} height="100%" flush camera={uc.camera} target={uc.target} bloom={1.1} minDistance={0.2} maxDistance={400} hint="drag to orbit · scroll to zoom">
+        <Stage key={uc.id} height="100%" flush camera={uc.camera} target={uc.target} bloom={1.1} minDistance={0.2} maxDistance={400}>
           {Scene && <Scene />}
         </Stage>
         <div className="uc-overlay">

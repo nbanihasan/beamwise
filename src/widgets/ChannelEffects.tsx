@@ -346,7 +346,7 @@ export default function ChannelEffects() {
 
   return (
     <Widget title="Channel impairments, photon by photon" eyebrow="3D · Monte Carlo" controls={controls} caption={<p>{EXPLAIN[mode]}</p>}>
-      <Stage height={330} camera={[0.5, 2.4, 7.2]} target={[0, 0, 0]} bloom={1.1} hint="drag to orbit">
+      <Stage height={330} camera={[0.5, 2.4, 7.2]} target={[0, 0, 0]} bloom={1.1}>
         <StudioLights intensity={0.7} />
         <group position={[-L / 2 - 0.15, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
           <EmitterBody scale={5} kind="laser" color="#ffe2a0" />

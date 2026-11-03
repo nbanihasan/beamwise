@@ -9,7 +9,13 @@ import { aimAt, coverage, findBouncePoint, trace } from '@/bench/tracer';
 import { analyse } from '@/bench/link';
 import { advise, fmtRate, type Fix } from '@/bench/advisor';
 import type { Kind, Vec3 } from '@/bench/types';
+import { InteractHint } from '@/three/InteractHint';
 import './bench.css';
+
+const BENCH_HINT = {
+  touch: 'Drag to rotate · pinch to zoom · tap a part to select it',
+  mouse: 'Drag a part to move it · drag empty space to rotate · scroll to zoom',
+};
 
 /**
  * The Optical Bench: pick a scenario, place components in 3D, and see the channel, the link budget,
@@ -28,6 +34,7 @@ export default function BenchPage() {
     if (wanted && wanted !== state.scenario && scenarioById(wanted).id === wanted) dispatch({ t: 'scenario', id: wanted });
   }, [wanted]); // eslint-disable-line react-hooks/exhaustive-deps
   const api = useRef<SceneApi | null>(null);
+  const stageRef = useRef<HTMLElement>(null);
   const [tab, setTab] = useState<Tab>('results');
   const [mtab, setMtab] = useState<MobileTab>('scene');
   const [drawer, setDrawer] = useState(true);
@@ -237,7 +244,7 @@ export default function BenchPage() {
         {libOpen && <Library onAdd={(k) => add(k)} sc={sc} />}
       </aside>
 
-      <section className="b-stage" onDragOver={(e) => e.preventDefault()} onDrop={onDrop}>
+      <section className="b-stage" ref={stageRef} onDragOver={(e) => e.preventDefault()} onDrop={onDrop}>
         <BenchCanvas state={state} sc={sc} dispatch={dispatch} tr={tr} an={an} cov={cov} layers={layers} onApi={(a) => (api.current = a)} />
         {layers.coverage && cov && (
           <div className="b-legend">
@@ -249,6 +256,7 @@ export default function BenchPage() {
           </div>
         )}
         <div className="b-help">Drag to move · Shift-drag: height · Right-drag: pan · R/T: rotate · Del: delete</div>
+        <InteractHint key={sc.id} target={stageRef} text={BENCH_HINT} />
         {toast && <div className="b-toast">{toast}</div>}
       </section>
 

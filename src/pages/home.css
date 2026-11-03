@@ -696,3 +696,12 @@
 .h-stats a {
   pointer-events: auto;
 }
+
+/* hero: the gesture hint sits over the beam (right half) on wide screens, not over the copy */
+@media (min-width: 701px) {
+  .h-hero-scene .ix-hint {
+    left: 74%;
+    bottom: auto;
+    top: calc(var(--header-h) + 22px);
+  }
+}

@@ -1946,3 +1946,76 @@ select.select {
   isolation: isolate;
   z-index: 0;
 }
+
+/* ---------- interaction hint over 3D views: appears, then fades out on first touch / drag / scroll ---------- */
+.ix-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  z-index: 6;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  max-width: calc(100% - 24px);
+  padding: 8px 14px 8px 10px;
+  border-radius: 999px;
+  background: rgba(8, 9, 14, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  color: #eef0f6;
+  font-size: 0.78rem;
+  font-weight: 500;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, 6px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+.ix-hint.on {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+.ix-hint span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ix-icon {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  fill: none;
+  stroke: #ffd27a;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  animation: ix-nudge 2.4s ease-in-out infinite;
+}
+.ix-orbit {
+  stroke: #8fd3ff;
+  stroke-dasharray: 3 3;
+}
+@keyframes ix-nudge {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  30% {
+    transform: translateX(-3px) rotate(-6deg);
+  }
+  65% {
+    transform: translateX(3px) rotate(6deg);
+  }
+}
+@media (max-width: 420px) {
+  .ix-hint {
+    font-size: 0.72rem;
+    white-space: normal;
+    text-align: left;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ix-icon {
+    animation: none;
+  }
+}
