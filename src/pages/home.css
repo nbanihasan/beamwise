@@ -600,44 +600,56 @@
   }
 }
 
-/* ---------------- phones: the 3D scene gets its own band above the copy ---------------- */
+/* ---------------- phones: copy first, then the 3D scene in its own band, then the stats ---------------- */
 @media (max-width: 700px) {
   .h-hero {
-    display: block;
+    display: flex;
+    flex-direction: column;
     height: auto;
     min-height: 0;
-    padding: 0 0 28px;
+    padding: calc(var(--header-h) + 8px) 0 28px;
     background: #050508;
   }
+  .h-hero-copy {
+    order: 1;
+    padding: 0 var(--gutter-r) 0 var(--gutter-l);
+  }
   .h-hero-scene {
+    order: 2;
     position: relative;
     inset: auto;
-    height: min(58vh, 460px);
-    min-height: 320px;
+    height: min(52vh, 420px);
+    min-height: 300px;
+    margin-top: 18px;
+  }
+  .h-stats {
+    order: 3;
+    padding: 0 var(--gutter-r) 0 var(--gutter-l);
+    margin-top: 20px;
   }
   .h-hero::after {
     display: none;
   }
+  .h-hero-scene::before,
   .h-hero-scene::after {
     content: '';
     position: absolute;
-    inset: auto 0 0;
-    height: 70px;
-    background: linear-gradient(0deg, #050508, transparent);
+    left: 0;
+    right: 0;
+    height: 48px;
     pointer-events: none;
+    z-index: 1;
   }
-  .h-hero-copy,
-  .h-stats {
-    padding: 0 var(--gutter-r) 0 var(--gutter-l);
+  .h-hero-scene::before {
+    top: 0;
+    background: linear-gradient(180deg, #050508, transparent);
   }
-  .h-hero-copy {
-    margin-top: -18px;
+  .h-hero-scene::after {
+    bottom: 0;
+    background: linear-gradient(0deg, #050508, transparent);
   }
   .h-hero h1 {
     margin-top: 12px;
-  }
-  .h-stats {
-    margin-top: 32px;
   }
 }
 
@@ -672,4 +684,15 @@
 /* over the (always dark) hero, the unscrolled header fades dark in every theme, never grey */
 .topbar:not(.solid)::before {
   background: linear-gradient(180deg, rgba(4, 4, 6, 0.55), transparent);
+}
+
+/* desktop: the copy overlays the scene, so let drags pass through it to the 3D canvas; only real controls catch the pointer */
+.h-hero-copy,
+.h-stats {
+  pointer-events: none;
+}
+.h-hero-copy a,
+.h-hero-copy button,
+.h-stats a {
+  pointer-events: auto;
 }

@@ -70,6 +70,8 @@ Edit `src/content/lessons/channel/my-new-topic/lesson.mdx`. It appears in the cu
 
 ## Licence
 
+Created by Dr Navid Bani Hassan.
+
 - Code: [MIT](LICENSE)
 - Lesson text and figures: [CC BY 4.0](CONTENT_LICENSE.md)
 

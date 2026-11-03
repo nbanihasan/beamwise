@@ -15,6 +15,7 @@ export function Footer() {
           <span>
             Open courseware for optical wireless communications. MIT code, CC BY 4.0 content. {LESSONS.length} lessons, {REFERENCES.length} references.
           </span>
+          <span className="footer-author">Created by Dr Navid Bani Hassan</span>
         </div>
         <nav className="footer-links" aria-label="Footer">
           <div>

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "Photonova: an open, interactive, 3D atlas for learning optical wireless communications (VLC, LiFi, OCC, FSO, UWOC) from zero to hero.",
+  "author": "Dr Navid Bani Hassan",
   "license": "MIT",
   "type": "module",
   "scripts": {

@@ -1935,3 +1935,8 @@ select.select {
   overflow-wrap: anywhere;
   line-height: 1.25;
 }
+.footer-author {
+  font-size: 0.72rem;
+  color: var(--text-3);
+  letter-spacing: 0.02em;
+}
