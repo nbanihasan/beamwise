@@ -116,6 +116,8 @@
 }
 
 .uc-rail {
+  flex-wrap: wrap;
+  justify-content: center;
   position: relative;
   z-index: 3;
   display: flex;

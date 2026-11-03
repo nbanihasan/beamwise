@@ -8,70 +8,12 @@ import { USE_CASES } from '@/usecases/data';
 import { colorForWavelength } from '@/lib/trackColor';
 import { useProgress } from '@/lib/progress';
 import { IconArrow } from '@/shell/Icons';
+import { BenchArt, EyeArt, SystemArt, UseCaseArt } from './HomeArt';
 import './home.css';
 
 const HeroStage = lazy(() => import('@/three/HeroStage'));
 
 const FEATURED_REFS = ['kahn1997', 'haas2016lifi', 'ghassemlooy2019book', 'khalighi2014fso', 'saeed2019occ', 'zeng2017uwoc'];
-
-/** Animated SVG vignettes for the explore cards (no extra WebGL contexts). */
-function SystemArt() {
-  const blocks = Array.from({ length: 9 });
-  return (
-    <svg viewBox="0 0 360 150" className="art" aria-hidden>
-      <defs>
-        <linearGradient id="bus" x1="0" x2="1">
-          <stop offset="0" stopColor="#8fa6ff" />
-          <stop offset="0.5" stopColor="#ffd27a" />
-          <stop offset="1" stopColor="#5ee0a8" />
-        </linearGradient>
-      </defs>
-      <path d="M20 110 H170 Q180 110 185 100 L200 50 Q205 40 215 40 H340" stroke="url(#bus)" strokeWidth="1.5" fill="none" className="art-bus" />
-      {blocks.map((_, i) => {
-        const x = i < 5 ? 20 + i * 34 : 215 + (i - 5) * 34;
-        const y = i < 5 ? 110 : 40;
-        const c = i < 3 ? '#8fa6ff' : i < 7 ? '#5ee0a8' : '#8fa6ff';
-        return <rect key={i} x={x - 12} y={y - 9} width="24" height="18" rx="5" fill="rgba(255,255,255,0.04)" stroke={c} strokeOpacity="0.8" className="art-chip" style={{ animationDelay: `${i * 0.18}s` }} />;
-      })}
-      <circle cx="192" cy="75" r="16" fill="#ffd27a" opacity="0.12" />
-      <circle cx="192" cy="75" r="5" fill="#ffd27a" />
-    </svg>
-  );
-}
-
-function BenchArt() {
-  return (
-    <svg viewBox="0 0 360 150" className="art" aria-hidden>
-      <rect x="20" y="62" width="22" height="26" rx="4" fill="none" stroke="#ffd27a" />
-      <path d="M150 30 L162 120" stroke="#e9eef7" strokeWidth="3" strokeLinecap="round" />
-      <ellipse cx="250" cy="75" rx="7" ry="30" fill="rgba(143,211,255,0.15)" stroke="#8fd3ff" />
-      <rect x="318" y="66" width="18" height="18" rx="4" fill="none" stroke="#5ee0a8" />
-      {[-18, -9, 0, 9, 18].map((o, i) => (
-        <path key={i} d={`M42 75 L156 ${75 + o * 1.6} L250 ${70 + o} L327 75`} stroke="#ffd27a" strokeOpacity={0.5} fill="none" className="art-ray" style={{ animationDelay: `${i * 0.25}s` }} />
-      ))}
-      <text x="20" y="140" className="art-label">
-        LED → mirror → lens → photodiode
-      </text>
-    </svg>
-  );
-}
-
-function EyeArt() {
-  const traces = Array.from({ length: 18 }, (_, i) => {
-    const a = i % 2 ? 1 : -1;
-    const b = i % 3 ? 1 : -1;
-    const j = (i % 5) * 1.5;
-    return `M10 ${75 - a * (38 + j)} C 90 ${75 - a * (38 + j)}, 110 ${75 - b * (38 - j)}, 180 ${75 - b * (38 - j)} S 270 ${75 + a * (36 + j)}, 350 ${75 + a * (36 + j)}`;
-  });
-  return (
-    <svg viewBox="0 0 360 150" className="art" aria-hidden>
-      {traces.map((d, i) => (
-        <path key={i} d={d} stroke="#5ee0a8" strokeOpacity="0.32" fill="none" />
-      ))}
-      <line x1="180" y1="20" x2="180" y2="130" stroke="#ffd27a" strokeDasharray="3 4" />
-    </svg>
-  );
-}
 
 export function Home() {
   const progress = useProgress();
@@ -135,45 +77,48 @@ export function Home() {
           </h2>
         </div>
         <div className="bento">
-          <Link to="/bench" className="bento-card big accent">
-            <BenchArt />
-            <div>
+          <Link to="/bench" className="bento-card">
+            <div className="bento-screen"><BenchArt /></div>
+            <div className="bento-text">
               <span className="eyebrow">Lab · 3D ray tracing</span>
               <h3>Optical Bench</h3>
-              <p>
-                Pick a scenario, then place LEDs, lasers, mirrors, lenses, prisms, polarizers, SPADs and cameras in 3D. Watch the rays, read the link budget, and let the advisor design the whole
-                modem chain.
-              </p>
+              <p>Pick a scenario and place LEDs, lasers, mirrors, lenses, polarizers and detectors in 3D. Watch the rays, read the link budget, and let the advisor design the modem chain.</p>
+              <span className="bento-go">
+                Open <IconArrow />
+              </span>
             </div>
           </Link>
           <Link to="/system" className="bento-card">
-            <SystemArt />
-            <div>
+            <div className="bento-screen"><SystemArt /></div>
+            <div className="bento-text">
               <span className="eyebrow">3D · architecture</span>
               <h3>The whole link</h3>
-              <p>Nineteen blocks from server to laptop. Fly to any of them and see the signal there.</p>
+              <p>Nineteen blocks from server to laptop. Fly to any of them and see the signal at that point.</p>
+              <span className="bento-go">
+                Open <IconArrow />
+              </span>
             </div>
           </Link>
           <Link to="/use-cases" className="bento-card">
-            <div className="uc-mosaic" aria-hidden>
-              {USE_CASES.map((u) => (
-                <span key={u.id} style={{ ['--a' as string]: u.accent }}>
-                  {u.title}
-                </span>
-              ))}
-            </div>
-            <div>
+            <div className="bento-screen"><UseCaseArt /></div>
+            <div className="bento-text">
               <span className="eyebrow">3D · applications</span>
               <h3>{USE_CASES.length} use cases</h3>
-              <p>From satellite laser links to cars, TVs, factories and the sea floor.</p>
+              <p>From satellite laser links to cars, TVs, factories and the sea floor, each as a scene you can explore.</p>
+              <span className="bento-go">
+                Open <IconArrow />
+              </span>
             </div>
           </Link>
-          <Link to="/lab" className="bento-card wide">
-            <EyeArt />
-            <div>
+          <Link to="/lab" className="bento-card">
+            <div className="bento-screen"><EyeArt /></div>
+            <div className="bento-text">
               <span className="eyebrow">Simulator</span>
               <h3>Link Lab</h3>
-              <p>An end-to-end IM/DD link: eye diagrams, constellations, BER.</p>
+              <p>An end-to-end IM/DD link, sample by sample: eye diagrams, constellations, spectra and BER.</p>
+              <span className="bento-go">
+                Open <IconArrow />
+              </span>
             </div>
           </Link>
         </div>
