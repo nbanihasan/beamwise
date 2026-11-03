@@ -7,7 +7,7 @@ export function Contribute() {
       <span className="eyebrow">Contribute</span>
       <h1 style={{ fontSize: 'var(--step-4)', margin: '10px 0 12px' }}>Add what you know</h1>
       <p className="muted" style={{ maxWidth: '66ch', marginTop: 0 }}>
-        The field moves every month. Beamwise is structured so a new lesson, figure, reference or simulation is a small, self-contained pull request. Content is
+        The field moves every month. Photonova is structured so a new lesson, figure, reference or simulation is a small, self-contained pull request. Content is
         CC BY 4.0, code is MIT.
       </p>
 

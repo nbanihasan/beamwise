@@ -1,10 +1,10 @@
-<p align="center"><img src="docs/logo.svg" alt="Beamwise" width="300" /></p>
+<p align="center"><img src="docs/logo.svg" alt="Photonova" width="310" /></p>
 
-# Beamwise
+# Photonova
 
 **Learn optical wireless by playing with light.** Open, interactive 3D courseware for optical wireless communications, from zero to hero.
 
-Beamwise teaches visible light communication (VLC), LiFi, optical camera communication (OCC), free-space optics (FSO) and underwater optical links (UWOC). Each equation comes with a 3D scene or a live simulation you can change and break. The content follows the field's surveys, tutorials, handbooks and standards, and every lesson cites its sources.
+Photonova teaches visible light communication (VLC), LiFi, optical camera communication (OCC), free-space optics (FSO) and underwater optical links (UWOC). Each equation comes with a 3D scene or a live simulation you can change and break. The content follows the field's surveys, tutorials, handbooks and standards, and every lesson cites its sources.
 
 ## What's inside
 
@@ -73,4 +73,4 @@ Edit `src/content/lessons/channel/my-new-topic/lesson.mdx`. It appears in the cu
 - Code: [MIT](LICENSE)
 - Lesson text and figures: [CC BY 4.0](CONTENT_LICENSE.md)
 
-Cited works belong to their authors and publishers; Beamwise links to them and quotes nothing beyond short attributed facts.
+Cited works belong to their authors and publishers; Photonova links to them and quotes nothing beyond short attributed facts.

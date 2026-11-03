@@ -1,8 +1,8 @@
 {
-  "name": "beamwise",
+  "name": "photonova",
   "version": "0.1.0",
   "private": true,
-  "description": "Beamwise: an open, interactive, 3D atlas for learning optical wireless communications (VLC, LiFi, OCC, FSO, UWOC) from zero to hero.",
+  "description": "Photonova: an open, interactive, 3D atlas for learning optical wireless communications (VLC, LiFi, OCC, FSO, UWOC) from zero to hero.",
   "license": "MIT",
   "type": "module",
   "scripts": {

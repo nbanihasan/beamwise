@@ -45,24 +45,24 @@ export const IconCheck = () => (
   </svg>
 );
 
-/** Brand mark: an emitter sending a beam, wrapped in spectrum-coloured wireless arcs. */
+/** Brand mark: the Photonova photon, a ring and core with eight rays in a cyan-to-violet gradient. */
 export const BrandMark = () => (
-  <svg className="brand-mark" viewBox="0 0 32 32" aria-hidden>
+  <svg className="brand-mark" viewBox="123 5 64 64" aria-hidden>
     <defs>
-      <linearGradient id="bw-beam" x1="0" x2="1">
-        <stop offset="0" stopColor="#ffffff" />
-        <stop offset="1" stopColor="#ffd27a" stopOpacity="0.2" />
+      <linearGradient id="pn-g" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stopColor="#35E1F5" />
+        <stop offset="100%" stopColor="#A17BFF" />
       </linearGradient>
-      <radialGradient id="bw-glow">
-        <stop offset="0" stopColor="#fff6dc" />
-        <stop offset="1" stopColor="#ffd27a" stopOpacity="0" />
-      </radialGradient>
     </defs>
-    <circle cx="7" cy="16" r="6.5" fill="url(#bw-glow)" opacity="0.55" />
-    <path d="M7 16H30" stroke="url(#bw-beam)" strokeWidth="1.6" strokeLinecap="round" />
-    <path d="M12.1 9.9A8 8 0 0 1 12.1 22.1" fill="none" stroke="#b49bff" strokeWidth="2.6" strokeLinecap="round" />
-    <path d="M16 5.3A14 14 0 0 1 16 26.7" fill="none" stroke="#5ad8ff" strokeWidth="2.6" strokeLinecap="round" />
-    <path d="M19.2 1.9A19 19 0 0 1 19.2 30.1" fill="none" stroke="#ffcf6b" strokeWidth="2.6" strokeLinecap="round" />
-    <circle cx="7" cy="16" r="2.8" fill="#fff" />
+    <circle cx="155" cy="37" r="16" fill="none" stroke="url(#pn-g)" strokeWidth="3" />
+    <circle cx="155" cy="37" r="5" fill="#75E9FF" />
+    <line x1="178.00" y1="37.00" x2="185.00" y2="37.00" stroke="url(#pn-g)" strokeWidth="2.6" strokeLinecap="round" />
+    <line x1="171.26" y1="53.26" x2="176.21" y2="58.21" stroke="url(#pn-g)" strokeWidth="2.6" strokeLinecap="round" />
+    <line x1="155.00" y1="60.00" x2="155.00" y2="67.00" stroke="url(#pn-g)" strokeWidth="2.6" strokeLinecap="round" />
+    <line x1="138.74" y1="53.26" x2="133.79" y2="58.21" stroke="url(#pn-g)" strokeWidth="2.6" strokeLinecap="round" />
+    <line x1="132.00" y1="37.00" x2="125.00" y2="37.00" stroke="url(#pn-g)" strokeWidth="2.6" strokeLinecap="round" />
+    <line x1="138.74" y1="20.74" x2="133.79" y2="15.79" stroke="url(#pn-g)" strokeWidth="2.6" strokeLinecap="round" />
+    <line x1="155.00" y1="14.00" x2="155.00" y2="7.00" stroke="url(#pn-g)" strokeWidth="2.6" strokeLinecap="round" />
+    <line x1="171.26" y1="20.74" x2="176.21" y2="15.79" stroke="url(#pn-g)" strokeWidth="2.6" strokeLinecap="round" />
   </svg>
 );

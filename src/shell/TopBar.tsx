@@ -15,10 +15,10 @@ export function TopBar({ onSearch }: { onSearch: () => void }) {
 
   return (
     <header className="topbar">
-      <Link to="/" className="brand" aria-label="Beamwise home">
+      <Link to="/" className="brand" aria-label="Photonova home">
         <BrandMark />
         <span className="brand-name">
-          Beam<em className="serif">wise</em>
+          photo<span className="brand-accent">nova</span>
         </span>
       </Link>
       <nav className={`nav ${open ? 'open' : ''}`} aria-label="Main">

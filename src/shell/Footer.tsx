@@ -10,7 +10,7 @@ export function Footer() {
       <div className="footer-inner">
         <div className="footer-brand">
           <span className="footer-title">
-            Beam<em className="serif">wise</em>
+            photo<span className="brand-accent">nova</span>
           </span>
           <span>
             Open courseware for optical wireless communications. MIT code, CC BY 4.0 content. {LESSONS.length} lessons, {REFERENCES.length} references.
