@@ -38,7 +38,7 @@ export default defineConfig(({ mode }) => {
       chunkSizeWarningLimit: 4000,
     },
     test: {
-      include: ['src/**/*.test.ts'],
+      include: ['src/**/*.test.ts', 'functions/**/*.test.ts'],
       environment: 'node',
     },
   };

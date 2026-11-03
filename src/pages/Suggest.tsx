@@ -31,6 +31,8 @@ export function Suggest() {
   const [source, setSource] = useState('');
   const [name, setName] = useState('');
   const [copied, setCopied] = useState(false);
+  const [honey, setHoney] = useState('');
+  const [send, setSend] = useState<{ state: 'idle' | 'sending' | 'sent' | 'error'; url?: string; msg?: string }>({ state: 'idle' });
   const k = KINDS.find((x) => x.id === kind)!;
 
   const places = useMemo(
@@ -65,6 +67,22 @@ export function Suggest() {
   const ready = title.trim().length >= 4 && details.trim().length >= 10;
   const issueUrl = `${REPO_URL}/issues/new?${new URLSearchParams({ title: issueTitle, body, labels: k.labels }).toString()}`;
 
+  // The no-account path posts to a Cloudflare Pages Function. The GitHub Pages mirror has no functions,
+  // so it posts to the Cloudflare deployment instead.
+  const api = typeof location !== 'undefined' && location.hostname.endsWith('github.io') ? 'https://photonova.pages.dev/api/suggest' : '/api/suggest';
+  const submit = async () => {
+    if (!ready || send.state === 'sending') return;
+    setSend({ state: 'sending' });
+    try {
+      const res = await fetch(api, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title: issueTitle, body, labels: k.labels, website: honey }) });
+      const j = (await res.json().catch(() => ({}))) as { ok?: boolean; url?: string; error?: string };
+      if (res.ok && j.ok) setSend({ state: 'sent', url: j.url });
+      else setSend({ state: 'error', msg: j.error || 'The suggestion could not be sent right now.' });
+    } catch {
+      setSend({ state: 'error', msg: 'The suggestion could not be sent right now.' });
+    }
+  };
+
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(`${issueTitle}\n\n${body}`);
@@ -81,7 +99,7 @@ export function Suggest() {
       <h1>
         Help make {SITE_NAME} <em>better</em>
       </h1>
-      <p className="muted lede">Spotted an error, missing a topic, or have an idea? No code needed: fill in the form and it becomes a tracked request the maintainers review.</p>
+      <p className="muted lede">Spotted an error, missing a topic, or have an idea? No code and no account needed: fill in the form and it becomes a tracked request the maintainers review.</p>
 
       <ol className="sg-steps" aria-label="How it works">
         <li>
@@ -91,12 +109,12 @@ export function Suggest() {
         <li>
           <b>2</b>
           <span>
-            Press <em>Open on GitHub</em>: your suggestion appears ready to send. Sign in (a free account) and press <em>Submit new issue</em>.
+            Press <em>Send suggestion</em>. No account or email needed.
           </span>
         </li>
         <li>
           <b>3</b>
-          <span>We review it publicly; GitHub emails you when someone replies or when it is fixed.</span>
+          <span>It becomes a public request that the maintainers review. You get a link to follow it.</span>
         </li>
       </ol>
 
@@ -151,19 +169,52 @@ export function Suggest() {
             <input className="sg-input" value={name} onChange={(e) => setName(e.target.value)} maxLength={80} />
           </label>
 
-          <div className="sg-actions">
-            {REPO_URL ? (
-              <a className={`btn primary ${ready ? '' : 'disabled'}`} href={ready ? issueUrl : undefined} target="_blank" rel="noreferrer" aria-disabled={!ready} onClick={(e) => !ready && e.preventDefault()}>
-                Open on GitHub <IconArrow />
-              </a>
-            ) : null}
-            <button type="button" className="btn" onClick={copy} disabled={!ready}>
-              {copied ? 'Copied' : 'Copy the text'}
-            </button>
-            {!ready && <span className="small muted">Add a summary and a few words of detail to continue.</span>}
-          </div>
+          {/* honeypot: hidden from people, tempting for bots */}
+          <label className="sg-hp" aria-hidden="true">
+            Website
+            <input tabIndex={-1} autoComplete="off" value={honey} onChange={(e) => setHoney(e.target.value)} />
+          </label>
+
+          {send.state === 'sent' ? (
+            <div className="sg-done" role="status">
+              <b>Thank you, your suggestion was sent.</b>
+              <span>
+                It is now a public issue the maintainers will review.{' '}
+                {send.url && (
+                  <a href={send.url} target="_blank" rel="noreferrer">
+                    See it on GitHub
+                  </a>
+                )}
+              </span>
+            </div>
+          ) : (
+            <>
+              <div className="sg-actions">
+                <button type="button" className="btn primary" onClick={submit} disabled={!ready || send.state === 'sending'}>
+                  {send.state === 'sending' ? 'Sending…' : 'Send suggestion'}
+                </button>
+                {!ready && <span className="small muted">Add a summary and a few words of detail to continue.</span>}
+              </div>
+              {send.state === 'error' && (
+                <p className="sg-err" role="alert">
+                  {send.msg} You can still send it with a GitHub account, or copy the text below.
+                </p>
+              )}
+              <div className="sg-alt">
+                <span className="small muted">Have a GitHub account? Send it yourself and get notified of replies:</span>
+                {REPO_URL ? (
+                  <a className={`btn small ${ready ? '' : 'disabled'}`} href={ready ? issueUrl : undefined} target="_blank" rel="noreferrer" aria-disabled={!ready} onClick={(e) => !ready && e.preventDefault()}>
+                    Open on GitHub <IconArrow />
+                  </a>
+                ) : null}
+                <button type="button" className="btn small ghost" onClick={copy} disabled={!ready}>
+                  {copied ? 'Copied' : 'Copy the text'}
+                </button>
+              </div>
+            </>
+          )}
           <p className="small muted" style={{ margin: 0 }}>
-            Everything you write is posted publicly on GitHub, so please don’t include private information.
+            No account needed. Suggestions become public GitHub issues, so please don’t include private information. Nothing about you is collected beyond what you type.
           </p>
         </form>
 
