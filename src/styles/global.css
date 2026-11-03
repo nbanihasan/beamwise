@@ -250,7 +250,7 @@ kbd {
   display: none;
 }
 
-@media (max-width: 1120px) {
+@media (max-width: 1240px) {
   .nav {
     display: none;
   }
@@ -2337,4 +2337,26 @@ select.select {
   border-radius: var(--r-md);
   border: 1px solid color-mix(in srgb, var(--good) 50%, transparent);
   background: color-mix(in srgb, var(--good) 12%, transparent);
+}
+
+/* Contribute stands out in the top navigation */
+.nav a.nav-cta {
+  color: var(--phosphor);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--phosphor) 45%, transparent);
+  margin-left: 4px;
+}
+.nav a.nav-cta:hover {
+  background: var(--phosphor-soft);
+  color: var(--phosphor);
+}
+.nav a.nav-cta.active {
+  color: var(--phosphor-ink);
+  background: var(--phosphor);
+  box-shadow: none;
+}
+@media (max-width: 1240px) {
+  .nav.open a.nav-cta {
+    margin: 6px 0 0;
+    text-align: center;
+  }
 }

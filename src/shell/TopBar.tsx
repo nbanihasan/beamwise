@@ -37,6 +37,9 @@ export function TopBar({ onSearch }: { onSearch: () => void }) {
         <NavLink to="/bench">Optical Bench</NavLink>
         <NavLink to="/lab">Link Lab</NavLink>
         <NavLink to="/library">Library</NavLink>
+        <NavLink to="/contribute" className="nav-cta">
+          Contribute
+        </NavLink>
       </nav>
       <div className="topbar-right">
         <button className="search-btn" type="button" onClick={onSearch} aria-label="Search lessons, terms and papers">
