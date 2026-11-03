@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { onRequestPost } from './suggest';
+import { onRequestPost } from '../functions/api/suggest';
 
 const post = (body: unknown, origin = 'https://photonova.pages.dev', ip = '1.2.3.4') =>
   new Request('https://photonova.pages.dev/api/suggest', {
