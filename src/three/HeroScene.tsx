@@ -141,10 +141,11 @@ export function HeroScene() {
           <planeGeometry args={[0.52, 0.52]} />
           <meshStandardMaterial ref={pd} color="#24304f" emissive="#5ad8ff" emissiveIntensity={0.3} toneMapped={false} />
         </mesh>
-        <Html position={[0, -0.55, 0]} center>
-          <div className="scene-label">photodiode → i(t)</div>
-        </Html>
       </group>
+      {/* label sits down-left of the detector, under the beam, so it never covers it */}
+      <Html position={[rx.x - 1.5, rx.y - 0.75, rx.z]} center>
+        <div className="scene-label">photodiode → i(t)</div>
+      </Html>
       <Html position={[tx.x, tx.y + 0.75, 0]} center>
         <div className="scene-label">LED · on-off keying</div>
       </Html>
