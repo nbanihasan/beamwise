@@ -326,3 +326,40 @@
     height: 88vh;
   }
 }
+
+/* phones: the scene gets its own band and the info card sits below it, instead of covering half the scene */
+@media (max-width: 600px) {
+  .uc-stage {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+  }
+  .uc-stage .scene {
+    position: relative;
+    height: 52vh !important;
+    min-height: 300px;
+  }
+  .uc-stage::after {
+    display: none;
+  }
+  .uc-overlay {
+    position: relative;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    width: auto;
+    margin: -36px var(--gutter-r) 0 var(--gutter-l);
+    padding: 16px;
+    /* stays dark in every theme: its text colours are tuned for the night-sky scenes */
+    background: rgba(10, 11, 16, 0.96);
+    color: #f4f4f6;
+  }
+  .uc-overlay h1 {
+    font-size: 1.7rem;
+  }
+  .uc-rail {
+    margin-top: 14px;
+  }
+}

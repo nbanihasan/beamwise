@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useTheme, type ThemeChoice } from '@/lib/theme';
 import { BrandMark, IconAuto, IconGithub, IconMenu, IconMoon, IconSearch, IconSun } from './Icons';
 import { REPO_URL } from '@/lib/site';
+import { MenuSheet, TabBar } from './MobileNav';
 
 const NEXT: Record<ThemeChoice, ThemeChoice> = { system: 'dark', dark: 'light', light: 'system' };
 
@@ -10,7 +11,7 @@ export function TopBar({ onSearch }: { onSearch: () => void }) {
   const { choice, setChoice } = useTheme();
   const [open, setOpen] = useState(false);
   const loc = useLocation();
-  useEffect(() => setOpen(false), [loc.pathname]);
+  const close = useCallback(() => setOpen(false), []);
   const mac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
   // Frosted bar whenever content can sit under the header: every page except the top of the home hero.
   const [scrolled, setScrolled] = useState(false);
@@ -30,7 +31,7 @@ export function TopBar({ onSearch }: { onSearch: () => void }) {
           photo<span className="brand-accent">nova</span>
         </span>
       </Link>
-      <nav className={`nav ${open ? 'open' : ''}`} aria-label="Main">
+      <nav className="nav" aria-label="Main">
         <NavLink to="/learn">Learn</NavLink>
         <NavLink to="/system">System</NavLink>
         <NavLink to="/use-cases">Use cases</NavLink>
@@ -48,7 +49,7 @@ export function TopBar({ onSearch }: { onSearch: () => void }) {
           <kbd>{mac ? '⌘' : 'Ctrl'} K</kbd>
         </button>
         <button
-          className="icon-btn"
+          className="icon-btn hide-phone"
           type="button"
           onClick={() => setChoice(NEXT[choice])}
           aria-label={`Theme: ${choice}. Switch to ${NEXT[choice]}`}
@@ -57,14 +58,16 @@ export function TopBar({ onSearch }: { onSearch: () => void }) {
           {choice === 'system' ? <IconAuto /> : choice === 'dark' ? <IconMoon /> : <IconSun />}
         </button>
         {REPO_URL && (
-          <a className="icon-btn" href={REPO_URL} target="_blank" rel="noreferrer" aria-label="Source code on GitHub">
+          <a className="icon-btn hide-phone" href={REPO_URL} target="_blank" rel="noreferrer" aria-label="Source code on GitHub">
             <IconGithub />
           </a>
         )}
-        <button className="icon-btn menu-btn" type="button" onClick={() => setOpen((o) => !o)} aria-label="Menu" aria-expanded={open}>
+        <button className="icon-btn menu-btn" type="button" onClick={() => setOpen((o) => !o)} aria-label="Open menu" aria-expanded={open} aria-haspopup="dialog">
           <IconMenu />
         </button>
       </div>
+      <MenuSheet open={open} onClose={close} onSearch={onSearch} />
+      <TabBar onMore={() => setOpen(true)} moreOpen={open} />
     </header>
   );
 }

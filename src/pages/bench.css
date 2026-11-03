@@ -897,3 +897,13 @@
 .b-stage .ix-hint {
   bottom: 44px;
 }
+
+/* keyboard shortcuts mean nothing on a touch screen; the gesture hint covers phones */
+@media (max-width: 760px), (pointer: coarse) {
+  .b-help {
+    display: none;
+  }
+  .b-stage .ix-hint {
+    bottom: 16px;
+  }
+}

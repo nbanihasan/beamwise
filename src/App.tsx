@@ -41,7 +41,7 @@ export function App() {
   }, [loc.pathname]);
 
   return (
-    <div className="app">
+    <div className={`app ${loc.pathname.startsWith('/bench') ? 'is-bench' : ''}`}>
       <TopBar onSearch={() => setPaletteOpen(true)} />
       <main>
         <Suspense fallback={<div className="page muted">Loading…</div>}>

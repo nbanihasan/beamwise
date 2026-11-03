@@ -8,6 +8,7 @@ import { runChain } from '@/arch/chain';
 import { SignalView, describeSignal } from '@/arch/SignalView';
 import { lessonById } from '@/content/registry';
 import { IconArrow } from '@/shell/Icons';
+import { useMedia } from '@/lib/useMedia';
 import './system.css';
 
 /**
@@ -56,6 +57,8 @@ export default function SystemPage() {
     return () => window.removeEventListener('keydown', onKey);
   }); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // phones: pull the camera back and look down more, so both rows of blocks fit the narrow screen
+  const narrow = useMedia('(max-width: 700px)');
   const desc = b ? describeSignal(b.signal, sig) : null;
   const tex = useMemo(() => (b?.tex ? katex.renderToString(b.tex, { throwOnError: false, displayMode: true }) : ''), [b]);
   const lesson = b?.lesson ? lessonById(b.lesson) : undefined;
@@ -63,7 +66,7 @@ export default function SystemPage() {
   return (
     <div className="sys">
       <section className="sys-stage">
-        <Stage height="100%" flush camera={[-2.2, 7.4, 16.5]} target={[-2.2, 0.2, 2.2]} bloom={1} minDistance={2} maxDistance={60} hint="click any block to fly to it · ← → to step">
+        <Stage key={narrow ? 'n' : 'w'} height="100%" flush camera={narrow ? [-2.6, 33, 28] : [-2.2, 7.4, 16.5]} target={narrow ? [-2.6, 0, 0.6] : [-2.2, 0.2, 2.2]} bloom={1} minDistance={2} maxDistance={80} hint="click any block to fly to it · ← → to step">
           <ArchScene selected={selected} onSelect={(id) => select(id)} showLabels={labels} />
         </Stage>
 

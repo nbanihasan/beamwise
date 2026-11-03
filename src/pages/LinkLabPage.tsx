@@ -1,9 +1,9 @@
-import { useDeferredValue, useMemo, useState } from 'react';
+import { useDeferredValue, useEffect, useMemo, useState, type ReactNode } from 'react';
 import * as THREE from 'three';
 import { Html, Line } from '@react-three/drei';
 import { Stage } from '@/three/Stage';
 import { Plot } from '@/viz/Plot';
-import { GroupTitle, Readout, Readouts, Segmented, Slider, Toggle, berTone } from '@/viz/controls';
+import { Readout, Readouts, Segmented, Slider, Toggle, berTone } from '@/viz/controls';
 import { DEFAULT_LINK, simulateLink, type LinkConfig } from '@/sim/linkSim';
 import { lambertianOrder } from '@/sim/lambertian';
 import { dB, eng, sci } from '@/sim/math';
@@ -17,6 +17,31 @@ const PRESETS: { id: string; label: string; cfg: Partial<LinkConfig> }[] = [
   { id: 'sun', label: 'Sunlit room', cfg: { scheme: 'pam4', symbolRateMHz: 25, ledBandwidthMHz: 20, equalizer: 'lms', ambientUA: 3000, offsetM: 0.6, fovDeg: 60 } },
   { id: 'edge', label: 'Edge of coverage', cfg: { scheme: 'ook', symbolRateMHz: 20, ledBandwidthMHz: 20, equalizer: 'lms', offsetM: 2.4, fovDeg: 50, ambientUA: 20 } },
 ];
+
+const NARROW = '(max-width: 980px)';
+function useNarrow() {
+  const [n, setN] = useState(() => typeof window !== 'undefined' && window.matchMedia(NARROW).matches);
+  useEffect(() => {
+    const m = window.matchMedia(NARROW);
+    const on = () => setN(m.matches);
+    m.addEventListener('change', on);
+    return () => m.removeEventListener('change', on);
+  }, []);
+  return n;
+}
+
+/** A collapsible group of controls. Its summary line shows the current key values, so a closed group still informs. */
+function CtlGroup({ title, summary, defaultOpen, children }: { title: string; summary: string; defaultOpen: boolean; children: ReactNode }) {
+  return (
+    <details className="ctl-group" open={defaultOpen}>
+      <summary>
+        <span className="ctl-group-t">{title}</span>
+        <span className="ctl-group-s mono">{summary}</span>
+      </summary>
+      <div className="ctl-group-body">{children}</div>
+    </details>
+  );
+}
 
 function Geometry({ cfg }: { cfg: LinkConfig }) {
   const h = cfg.heightM;
@@ -67,6 +92,8 @@ export default function LinkLabPage() {
   const r = useMemo(() => simulateLink(deferred), [deferred]);
   const ofdm = cfg.scheme.endsWith('ofdm');
   const stale = deferred !== cfg;
+  const narrow = useNarrow();
+  const berText = r.ber === 0 ? `< ${sci(1 / r.nBits, 0)}` : sci(r.ber, 2);
 
   const blocks = [
     { k: 'Bits', v: ofdm ? `${cfg.qam}-QAM` : cfg.scheme.toUpperCase() },
@@ -109,6 +136,23 @@ export default function LinkLabPage() {
         </div>
       </header>
 
+      {narrow && (
+        <div className="lab-sticky" role="status" aria-live="polite" style={{ opacity: stale ? 0.7 : 1 }}>
+          <div>
+            <span>Throughput</span>
+            <b>{r.throughputMbps.toFixed(1)} Mb/s</b>
+          </div>
+          <div>
+            <span>SNR</span>
+            <b>{r.measuredSnrDb.toFixed(1)} dB</b>
+          </div>
+          <div className={`tone-${berTone(r.ber)}`}>
+            <span>BER</span>
+            <b>{berText}</b>
+          </div>
+        </div>
+      )}
+
       <div className="chain" aria-label="Signal chain">
         {blocks.map((b, i) => (
           <div className="chain-item" key={b.k}>
@@ -127,7 +171,7 @@ export default function LinkLabPage() {
 
       <div className="lab-grid">
         <aside className="lab-controls">
-          <GroupTitle>Modulation</GroupTitle>
+          <CtlGroup key={`mod-${narrow}`} title="Modulation" summary={ofdm ? `${cfg.scheme.toUpperCase()} · ${cfg.qam}-QAM` : `${cfg.scheme.toUpperCase()} · ${cfg.symbolRateMHz.toFixed(0)} MBd`} defaultOpen>
           <Segmented
             value={cfg.scheme}
             onChange={(v) => {
@@ -146,46 +190,63 @@ export default function LinkLabPage() {
           {ofdm && <Segmented label="Subcarrier QAM" value={cfg.qam} onChange={set('qam')} options={[{ value: 4, label: '4' }, { value: 16, label: '16' }, { value: 64, label: '64' }]} />}
           {cfg.scheme === 'dco-ofdm' && <Slider label="DC bias" value={cfg.dcBiasSigma} min={1} max={5} step={0.1} onChange={set('dcBiasSigma')} format={(v) => `${v.toFixed(1)} σ`} />}
 
-          <GroupTitle>Transmitter (LED)</GroupTitle>
+          </CtlGroup>
+          <CtlGroup key={`tx-${narrow}`} title="Transmitter (LED)" summary={`${cfg.ledBandwidthMHz} MHz · ${cfg.ledPowerW.toPrecision(2)} W`} defaultOpen={!narrow}>
           <Slider label="LED bandwidth" value={cfg.ledBandwidthMHz} min={1} max={500} log onChange={set('ledBandwidthMHz')} format={(v) => `${v.toFixed(v < 10 ? 1 : 0)} MHz`} />
           <Slider label="Average optical power" value={cfg.ledPowerW} min={0.05} max={10} log onChange={set('ledPowerW')} format={(v) => `${v.toPrecision(2)} W`} />
           {!ofdm && <Slider label="Modulation index" value={cfg.modIndex} min={0.05} max={1} step={0.01} onChange={set('modIndex')} format={(v) => `${(v * 100).toFixed(0)} %`} />}
           <Toggle label="LED non-linearity" checked={cfg.nonlinear} onChange={set('nonlinear')} />
           <Slider label="Semi-angle Φ½" value={cfg.semiAngleDeg} min={10} max={80} step={1} onChange={set('semiAngleDeg')} format={(v) => `${v}° · m=${lambertianOrder(v).toFixed(1)}`} />
 
-          <GroupTitle>Channel</GroupTitle>
+          </CtlGroup>
+          <CtlGroup key={`ch-${narrow}`} title="Channel" summary={`${cfg.heightM.toFixed(1)} m high · ${cfg.offsetM.toFixed(1)} m off`} defaultOpen={!narrow}>
           <Slider label="Height above receiver" value={cfg.heightM} min={0.5} max={5} step={0.05} onChange={set('heightM')} format={(v) => `${v.toFixed(2)} m`} />
           <Slider label="Horizontal offset" value={cfg.offsetM} min={0} max={4} step={0.05} onChange={set('offsetM')} format={(v) => `${v.toFixed(2)} m`} />
           <Slider label="Diffuse share" value={cfg.diffuseFraction} min={0} max={0.6} step={0.01} onChange={set('diffuseFraction')} format={(v) => `${(v * 100).toFixed(0)} %`} />
           <Slider label="RMS delay spread" value={cfg.rmsDelayNs} min={0.5} max={30} step={0.5} onChange={set('rmsDelayNs')} format={(v) => `${v} ns`} />
 
-          <GroupTitle>Receiver</GroupTitle>
+          </CtlGroup>
+          <CtlGroup key={`rx-${narrow}`} title="Receiver" summary={`FOV ${cfg.fovDeg}° · ${cfg.areaMm2.toPrecision(2)} mm²`} defaultOpen={!narrow}>
           <Slider label="Field of view" value={cfg.fovDeg} min={10} max={90} step={1} onChange={set('fovDeg')} format={(v) => `${v}°`} />
           <Slider label="Detector area" value={cfg.areaMm2} min={0.1} max={200} log onChange={set('areaMm2')} format={(v) => `${v.toPrecision(2)} mm²`} />
           <Slider label="Concentrator index n" value={cfg.lensIndex} min={0} max={2} step={0.05} onChange={set('lensIndex')} format={(v) => (v < 1 ? 'none' : v.toFixed(2))} />
           <Slider label="Ambient photocurrent" value={cfg.ambientUA} min={0.1} max={5000} log onChange={set('ambientUA')} format={(v) => `${v.toPrecision(2)} µA`} />
           <Slider label="Amplifier noise" value={cfg.tiaNoisePA} min={0.5} max={50} log onChange={set('tiaNoisePA')} format={(v) => `${v.toFixed(1)} pA/√Hz`} />
 
-          <GroupTitle>Receiver DSP</GroupTitle>
+          </CtlGroup>
+          <CtlGroup key={`dsp-${narrow}`} title="Receiver DSP" summary={cfg.equalizer === 'none' ? 'no equaliser' : cfg.equalizer.toUpperCase()} defaultOpen={!narrow}>
           {ofdm ? (
             <Segmented value={cfg.equalizer === 'none' ? 'none' : 'lms'} onChange={set('equalizer')} options={[{ value: 'none', label: 'Gain only' }, { value: 'lms', label: 'One-tap per subcarrier' }]} />
           ) : (
             <Segmented value={cfg.equalizer} onChange={set('equalizer')} options={[{ value: 'none', label: 'None' }, { value: 'zf', label: 'ZF' }, { value: 'lms', label: 'LMS' }, { value: 'dfe', label: 'DFE' }]} />
           )}
           <Slider label="Noise seed" value={cfg.seed} min={1} max={50} step={1} onChange={set('seed')} format={(v) => `#${v}`} />
+          </CtlGroup>
         </aside>
 
         <section className="lab-main" style={{ opacity: stale ? 0.7 : 1 }}>
-          <Readouts>
-            <Readout k="Throughput" v={`${r.throughputMbps.toFixed(1)} Mb/s`} />
-            <Readout k="Channel gain H₀" v={r.H0 > 0 ? sci(r.H0, 2) : 'no LOS'} tone={r.H0 > 0 ? undefined : 'bad'} />
-            <Readout k="Received power" v={r.PrW > 0 ? `${dB(r.PrW * 1000).toFixed(1)} dBm` : '—'} />
-            <Readout k="Photocurrent" v={eng(r.signalCurrent, 'A')} />
-            <Readout k="SNR (theory)" v={`${r.snrDb.toFixed(1)} dB`} />
-            <Readout k="SNR (measured)" v={`${r.measuredSnrDb.toFixed(1)} dB`} />
-            <Readout k="Bit errors" v={`${r.errors} / ${r.nBits}`} />
-            <Readout k="BER" v={r.ber === 0 ? `< ${sci(1 / r.nBits, 0)}` : sci(r.ber, 2)} tone={berTone(r.ber)} />
-          </Readouts>
+          {(() => {
+            const grid = (
+            <Readouts>
+              <Readout k="Throughput" v={`${r.throughputMbps.toFixed(1)} Mb/s`} />
+              <Readout k="Channel gain H₀" v={r.H0 > 0 ? sci(r.H0, 2) : 'no LOS'} tone={r.H0 > 0 ? undefined : 'bad'} />
+              <Readout k="Received power" v={r.PrW > 0 ? `${dB(r.PrW * 1000).toFixed(1)} dBm` : '—'} />
+              <Readout k="Photocurrent" v={eng(r.signalCurrent, 'A')} />
+              <Readout k="SNR (theory)" v={`${r.snrDb.toFixed(1)} dB`} />
+              <Readout k="SNR (measured)" v={`${r.measuredSnrDb.toFixed(1)} dB`} />
+              <Readout k="Bit errors" v={`${r.errors} / ${r.nBits}`} />
+              <Readout k="BER" v={berText} tone={berTone(r.ber)} />
+            </Readouts>
+            );
+            return narrow ? (
+              <details className="lab-more">
+                <summary>All link numbers</summary>
+                {grid}
+              </details>
+            ) : (
+              grid
+            );
+          })()}
           {r.note && <div className="lab-note">{r.note}</div>}
 
           <div className="lab-row">

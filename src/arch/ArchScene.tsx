@@ -110,15 +110,22 @@ function BlockModel({ b, active, hover }: { b: Block; active: boolean; hover: bo
 }
 
 function CameraRig({ selected }: { selected: string | null }) {
-  const { camera, controls } = useThree() as unknown as { camera: THREE.PerspectiveCamera; controls: { target: THREE.Vector3; update: () => void } | null };
+  const { camera, controls, size } = useThree() as unknown as { camera: THREE.PerspectiveCamera; controls: { target: THREE.Vector3; update: () => void } | null; size: { width: number; height: number } };
+  // portrait screens (phones) need a higher, further overview so both rows of blocks fit across
+  const portrait = size.width / Math.max(1, size.height) < 0.9;
   const goal = useRef<{ pos: THREE.Vector3; tgt: THREE.Vector3; t: number } | null>(null);
   useEffect(() => {
     const b = BLOCKS.find((x) => x.id === selected);
-    const tgt = b ? new THREE.Vector3(...b.pos) : new THREE.Vector3(-2.2, 0.2, 2.2);
-    const pos = b ? tgt.clone().add(b.pos[2] < 0 ? new THREE.Vector3(0.8, 4.6, 4.4) : new THREE.Vector3(0.8, 3.2, 5.2)) : new THREE.Vector3(-2.2, 7.4, 16.5);
+    const tgt = b ? new THREE.Vector3(...b.pos) : portrait ? new THREE.Vector3(-2.6, 0, 0.6) : new THREE.Vector3(-2.2, 0.2, 2.2);
+    const near = portrait ? 1.6 : 1;
+    const pos = b
+      ? tgt.clone().add((b.pos[2] < 0 ? new THREE.Vector3(0.8, 4.6, 4.4) : new THREE.Vector3(0.8, 3.2, 5.2)).multiplyScalar(near))
+      : portrait
+        ? new THREE.Vector3(-2.6, 33, 28)
+        : new THREE.Vector3(-2.2, 7.4, 16.5);
     if (b?.id === 'channel') pos.set(-1.5, 5.5, 8);
     goal.current = { pos, tgt, t: 0 };
-  }, [selected]);
+  }, [selected, portrait]);
   useFrame((_, dt) => {
     const g = goal.current;
     if (!g || !controls) return;

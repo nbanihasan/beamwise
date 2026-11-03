@@ -254,21 +254,6 @@ kbd {
   .nav {
     display: none;
   }
-  .nav.open {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: calc(var(--header-h) - 6px);
-    left: var(--gutter-l);
-    right: var(--gutter-r);
-    transform: none;
-    border-radius: var(--r-lg);
-    padding: 8px;
-    background: var(--solid);
-  }
-  .nav.open a {
-    padding: 10px 14px;
-  }
   .menu-btn {
     display: grid;
   }
@@ -2354,9 +2339,246 @@ select.select {
   background: var(--phosphor);
   box-shadow: none;
 }
-@media (max-width: 1240px) {
-  .nav.open a.nav-cta {
-    margin: 6px 0 0;
-    text-align: center;
+
+/* ===================== phone & small-laptop navigation ===================== */
+.msheet {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  pointer-events: none;
+}
+.msheet.open {
+  pointer-events: auto;
+}
+.msheet-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 2, 6, 0.55);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.msheet.open .msheet-backdrop {
+  opacity: 1;
+}
+.msheet-panel {
+  position: absolute;
+  top: max(8px, env(safe-area-inset-top));
+  right: max(8px, env(safe-area-inset-right));
+  left: max(8px, env(safe-area-inset-left));
+  max-width: 460px;
+  margin-left: auto;
+  max-height: calc(100dvh - 16px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 12px 12px 16px;
+  border-radius: var(--r-xl);
+  border: 1px solid var(--line-strong);
+  background: var(--solid);
+  box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.6);
+  transform: translateY(-12px) scale(0.98);
+  opacity: 0;
+  transition: transform 0.25s ease, opacity 0.2s ease;
+}
+.msheet.open .msheet-panel {
+  transform: none;
+  opacity: 1;
+}
+.msheet-head {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.msheet-search {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--text-3);
+  font: inherit;
+  font-size: 0.92rem;
+  text-align: left;
+  cursor: pointer;
+}
+.msheet-close {
+  flex: none;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--text);
+  cursor: pointer;
+}
+.msheet-sec {
+  display: block;
+  margin: 14px 6px 6px;
+  font: 0.66rem var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.msheet-list {
+  display: grid;
+  gap: 2px;
+}
+.msheet-list.two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+.msheet-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 6px 10px;
+  border-radius: 14px;
+  color: var(--text);
+  text-decoration: none;
+}
+.msheet-item:hover,
+.msheet-item:focus-visible {
+  background: var(--surface-2);
+  text-decoration: none;
+}
+.msheet-item.active {
+  background: var(--surface-3);
+}
+.msheet-list.two .msheet-item {
+  border: 1px solid var(--line);
+}
+.msheet-list.two .msheet-item:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+.msheet-ic {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  background: var(--surface-2);
+  color: var(--text-2);
+}
+.msheet-item.active .msheet-ic {
+  color: var(--phosphor);
+}
+.msheet-item.cta .msheet-ic {
+  background: var(--phosphor-soft);
+  color: var(--phosphor);
+}
+.msheet-txt {
+  display: grid;
+  min-width: 0;
+}
+.msheet-txt b {
+  font-weight: 550;
+  font-size: 0.98rem;
+}
+.msheet-txt small {
+  color: var(--text-3);
+  font-size: 0.78rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.msheet-theme {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  padding: 4px;
+  border-radius: 14px;
+  background: var(--surface-2);
+}
+.msheet-theme button {
+  min-height: 42px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-2);
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.msheet-theme button.on {
+  background: var(--ink);
+  color: var(--ink-text);
+}
+@media (min-width: 1241px) {
+  .msheet {
+    display: none;
+  }
+}
+
+/* bottom tab bar: phones only, never on the Optical Bench */
+.tabbar {
+  display: none;
+}
+@media (max-width: 760px) {
+  .tabbar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 90;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    padding: 6px max(6px, env(safe-area-inset-right)) max(6px, env(safe-area-inset-bottom)) max(6px, env(safe-area-inset-left));
+    background: color-mix(in srgb, var(--solid) 86%, transparent);
+    backdrop-filter: blur(18px) saturate(150%);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+    border-top: 1px solid var(--line);
+  }
+  .tab {
+    display: grid;
+    justify-items: center;
+    gap: 3px;
+    min-height: 52px;
+    padding: 6px 2px 4px;
+    border: 0;
+    border-radius: 12px;
+    background: transparent;
+    color: var(--text-3);
+    font: inherit;
+    font-size: 0.68rem;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .tab:hover {
+    text-decoration: none;
+  }
+  .tab.active {
+    color: var(--text);
+  }
+  .tab.active svg {
+    color: var(--phosphor);
+  }
+  /* leave room for the bar at the end of every page */
+  .app {
+    padding-bottom: calc(66px + env(safe-area-inset-bottom));
+  }
+  /* the header keeps only the essentials; theme and GitHub move into the menu */
+  .hide-phone {
+    display: none !important;
+  }
+  .topbar {
+    gap: 10px;
+  }
+  .brand-name {
+    font-size: 1rem;
+  }
+}
+@media (max-width: 760px) {
+  .app.is-bench {
+    padding-bottom: 0;
   }
 }

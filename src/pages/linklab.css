@@ -147,3 +147,168 @@
   background: color-mix(in srgb, var(--bad) 8%, var(--surface));
   font-size: 0.9rem;
 }
+
+/* ---------- collapsible control groups ---------- */
+.ctl-group {
+  border-top: 1px solid var(--line);
+}
+.ctl-group:first-child {
+  border-top: 0;
+}
+.ctl-group > summary {
+  list-style: none;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 2px;
+  cursor: pointer;
+  user-select: none;
+}
+.ctl-group > summary::-webkit-details-marker {
+  display: none;
+}
+.ctl-group-t {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.ctl-group-t::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-right: 1.6px solid currentColor;
+  border-bottom: 1.6px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 0.2s;
+}
+.ctl-group[open] .ctl-group-t::before {
+  transform: rotate(45deg);
+}
+.ctl-group-s {
+  font-size: 0.74rem;
+  color: var(--text-3);
+  text-align: right;
+}
+.ctl-group[open] .ctl-group-s {
+  visibility: hidden;
+}
+.ctl-group-body {
+  display: grid;
+  gap: 13px;
+  padding: 2px 0 14px;
+}
+.lab-controls {
+  gap: 0;
+}
+
+/* ---------- phones ---------- */
+.lab-sticky {
+  display: none;
+}
+@media (max-width: 980px) {
+  .lab {
+    padding-block: 16px 60px;
+  }
+  .lab-head {
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+  .lab-head p {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 0.92rem;
+  }
+  /* scenarios: one swipeable row of chips */
+  .lab-presets .seg {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent);
+    mask-image: linear-gradient(90deg, #000 85%, transparent);
+  }
+  .lab-presets .seg::-webkit-scrollbar {
+    display: none;
+  }
+  .lab-presets .seg button {
+    flex: none;
+    white-space: nowrap;
+  }
+  .lab-sticky {
+    position: sticky;
+    top: calc(var(--header-h) - 4px);
+    z-index: 20;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    margin: 0 0 12px;
+    border-radius: var(--r-md);
+    overflow: hidden;
+    border: 1px solid var(--line-strong);
+    background: var(--line);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    transition: opacity 0.15s;
+  }
+  .lab-sticky > div {
+    display: grid;
+    gap: 1px;
+    padding: 8px 10px;
+    background: color-mix(in srgb, var(--solid) 88%, transparent);
+    min-width: 0;
+  }
+  .lab-sticky span {
+    font: 0.6rem var(--font-mono);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+  .lab-sticky b {
+    font: 600 0.92rem var(--font-mono);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .lab-sticky .tone-good b {
+    color: var(--good);
+  }
+  .lab-sticky .tone-warn b {
+    color: var(--warn);
+  }
+  .lab-sticky .tone-bad b {
+    color: var(--bad);
+  }
+  .chain {
+    margin-bottom: 10px;
+  }
+  .chain-block {
+    min-width: 108px;
+    padding: 8px 10px;
+  }
+  .lab-controls {
+    padding: 4px 14px;
+  }
+  .lab-card {
+    padding: 8px;
+  }
+}
+.lab-more > summary {
+  cursor: pointer;
+  padding: 10px 14px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  font-size: 0.86rem;
+  color: var(--text-2);
+}
+.lab-more[open] > summary {
+  margin-bottom: 10px;
+}
