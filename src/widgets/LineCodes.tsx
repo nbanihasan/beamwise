@@ -125,7 +125,7 @@ export default function LineCodes() {
             <Segmented
               label="Dimming level"
               value={duty}
-              options={[0.1, 0.3, 0.5, 0.7, 0.9].map((d) => ({ value: d, label: `${d * 100}%` }))}
+              options={[0.1, 0.3, 0.5, 0.7, 0.9].map((d) => ({ value: d, label: `${Math.round(d * 100)}%` }))}
               onChange={setDuty}
             />
           )}

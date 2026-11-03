@@ -20,6 +20,8 @@ const PARTS: { value: Part; label: string }[] = [
   { value: 'npbs', label: '50:50 beam splitter' },
   { value: 'diffuser', label: 'Diffuser' },
 ];
+/** Short names for the labels under each part on the rail. */
+const SHORT: Record<Part, string> = { none: '', pol: 'Polarizer', hwp: 'λ/2 plate', qwp: 'λ/4 plate', faraday: 'Faraday', npbs: '50:50 splitter', diffuser: 'Diffuser' };
 const SRC: Record<Src, { label: string; s: S }> = {
   unpol: { label: 'LED (unpolarized)', s: [1, 0, 0, 0] },
   h: { label: 'Laser, horizontal', s: [1, 1, 0, 0] },
@@ -251,7 +253,7 @@ export default function PolarizationLab() {
                 </>
               )}
               <text y={58} textAnchor="middle" className="pl-l">
-                {PARTS.find((q) => q.value === p)?.label.replace(/ \(.*\)/, '')}
+                {SHORT[p]}
                 {p !== 'npbs' && p !== 'diffuser' ? ` ${th}°` : ''}
               </text>
             </g>
@@ -270,14 +272,14 @@ export default function PolarizationLab() {
         {end === 'pbs' && <rect x={600} y={172} width={32} height={18} rx={3} fill="var(--solid)" stroke="var(--good)" />}
       </svg>
       <Readouts>
-        <Readout k="State at the end" v={describe(out).kind} />
-        <Readout k="Degree of polarization" v={`${(describe(out).dop * 100).toFixed(0)} %`} />
+        <Readout k="Output state" v={describe(out).kind} />
+        <Readout k="Polarized" v={`${(describe(out).dop * 100).toFixed(0)} %`} />
         {end === 'det' ? (
-          <Readout k="Power at detector" v={`${(out[0] * 100).toFixed(1)} %`} tone={out[0] > 0.2 ? 'good' : out[0] > 0.01 ? 'warn' : 'bad'} />
+          <Readout k="Detector power" v={`${(out[0] * 100).toFixed(1)} %`} tone={out[0] > 0.2 ? 'good' : out[0] > 0.01 ? 'warn' : 'bad'} />
         ) : (
           <>
-            <Readout k="PBS transmitted (H)" v={`${(pbsT * 100).toFixed(1)} %`} />
-            <Readout k="PBS reflected (V)" v={`${(pbsR * 100).toFixed(1)} %`} />
+            <Readout k="PBS H out" v={`${(pbsT * 100).toFixed(1)} %`} />
+            <Readout k="PBS V out" v={`${(pbsR * 100).toFixed(1)} %`} />
           </>
         )}
       </Readouts>

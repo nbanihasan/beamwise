@@ -124,11 +124,11 @@ export default function SmartSurfaceLab() {
             </g>
           );
         })}
-        {mode === 'mirror' && <rect x={X0} y={SY} width={X1 - X0} height={6} fill="#dfe6f2" />}
+        {mode === 'mirror' && <rect x={X0} y={SY} width={X1 - X0} height={6} fill="var(--text-2)" />}
         {(mode === 'mems' || mode === 'dmd') &&
           elems.map((e, i) => {
             const hw = (X1 - X0) / N / 2 - 1.5;
-            return <line key={i} x1={e.x - hw * Math.cos(e.tilt)} y1={SY + 3 - hw * Math.sin(e.tilt)} x2={e.x + hw * Math.cos(e.tilt)} y2={SY + 3 + hw * Math.sin(e.tilt)} stroke="#dfe6f2" strokeWidth={4} strokeLinecap="round" />;
+            return <line key={i} x1={e.x - hw * Math.cos(e.tilt)} y1={SY + 3 - hw * Math.sin(e.tilt)} x2={e.x + hw * Math.cos(e.tilt)} y2={SY + 3 + hw * Math.sin(e.tilt)} stroke="var(--text-2)" strokeWidth={4} strokeLinecap="round" />;
           })}
         {mode === 'meta' &&
           elems.map((e, i) => (

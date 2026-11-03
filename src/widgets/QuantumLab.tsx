@@ -101,7 +101,7 @@ function Bb84() {
         <Readout k="Photons sent" v={rows.length} />
         <Readout k="Sifted key bits" v={`${sifted.length} (${((sifted.length / rows.length) * 100).toFixed(0)} %)`} />
         <Readout k="QBER" v={`${(qber * 100).toFixed(1)} %`} tone={qber < 0.08 ? 'good' : qber < 0.11 ? 'warn' : 'bad'} />
-        <Readout k="Secret fraction 1 − 2h(Q)" v={secret > 0 ? `${(secret * 100).toFixed(0)} %` : 'abort: no secure key'} tone={secret > 0 ? 'good' : 'bad'} />
+        <Readout k="Secret key, 1 − 2h(Q)" v={secret > 0 ? `${(secret * 100).toFixed(0)} %` : 'none: abort'} tone={secret > 0 ? 'good' : 'bad'} />
       </Readouts>
     </>
   );
@@ -144,8 +144,8 @@ function Entangle() {
       </div>
       <Readouts>
         <Readout k="E(a, b)" v={E(a, b).toFixed(3)} />
-        <Readout k="CHSH S with a, a+45°, b, b+45°" v={S.toFixed(3)} tone={S > 2 ? 'good' : 'bad'} />
-        <Readout k="Verdict" v={S > 2 ? 'violates Bell: entangled, eavesdropper-free' : 'no violation: no device-independent security'} tone={S > 2 ? 'good' : 'bad'} />
+        <Readout k="CHSH S" v={S.toFixed(3)} tone={S > 2 ? 'good' : 'bad'} />
+        <Readout k="Verdict" v={S > 2 ? 'Bell violated' : 'not certified'} tone={S > 2 ? 'good' : 'bad'} />
       </Readouts>
     </>
   );
@@ -167,7 +167,7 @@ export default function QuantumLab() {
         ) : (
           <p>
             A source emits photon pairs in the state (|HH⟩ + |VV⟩)/√2. Each photon alone is perfectly random, yet their outcomes are correlated as cos 2(a − b), more strongly than any pre-agreed
-            classical strategy allows. Set b = 22.5° with a = 0° for the maximum CHSH value 2√2 ≈ 2.83. Ekert's 1991 protocol uses this violation as a certificate that nobody else holds a copy of the key;
+            classical strategy allows. The figure computes the CHSH value from measurements at a, a + 45°, b and b + 45°. Set b = 22.5° with a = 0° for the maximum 2√2 ≈ 2.83. Ekert's 1991 protocol uses this violation as a certificate that nobody else holds a copy of the key;
             the Micius satellite did it over 1,120 km.
           </p>
         )

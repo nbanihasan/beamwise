@@ -41,6 +41,8 @@ IEEE 802.15.7 PHY I concatenates an outer Reed–Solomon and an inner convolutio
 Research papers often report a raw BER "below the FEC limit", such as $3.8\times10^{-3}$. That is the input BER at which a specific hard-decision code with about 7 % overhead delivers output BER near $10^{-15}$. Net data rate is then the raw rate times the code rate.
 </Callout>
 
+<BerCurves />
+
 ## Capacity: the ceiling
 
 For a bandwidth $B$ and SNR, Shannon's formula $C = B\log_2(1+\text{SNR})$ is the familiar upper bound. For IM/DD with non-negativity, peak and average optical power constraints the exact capacity has no simple closed form. At high SNR it grows like $\tfrac12\log_2(\text{SNR})$ bits per real channel use, the same slope as a real Gaussian channel, minus a constant penalty set by the power constraints. The textbooks give the bounds <Cite id="ghassemlooy2019book" />. Practical systems approach it with bit-loaded OFDM and strong codes.

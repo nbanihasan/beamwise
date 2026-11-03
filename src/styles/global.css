@@ -1898,3 +1898,40 @@ select.select {
 :root[data-theme='light'] .brand-accent {
   color: #0e9fbf;
 }
+
+/* QA: frosted header so scrolled content and dark 3D scenes never collide with the logo and buttons */
+.topbar::before {
+  transition: background 0.25s, backdrop-filter 0.25s;
+}
+.topbar.solid::before {
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  border-bottom: 1px solid var(--line);
+}
+/* light theme (system or manual): darker cyan so "nova" stays readable on light surfaces */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) .brand-accent {
+    color: #0e9fbf;
+  }
+}
+/* QA: SVG figure labels are in viewBox units; at lesson-column width 10 units rendered at ~6 px. */
+.lc-label,
+.ldpc-l,
+.pl-l,
+.ss-l {
+  font-size: 13px;
+}
+.ma-l {
+  font-size: 16px;
+}
+/* QA: readout labels wrap rather than truncate; values wrap at word breaks if they must */
+.readout .k {
+  white-space: normal;
+  line-height: 1.35;
+}
+.readout .v {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.25;
+}

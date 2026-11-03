@@ -250,8 +250,10 @@ export default function MultipleAccessLab() {
           )}
           <Readouts>
             <Readout k="Slices" v={info.slices} />
-            <Readout k="Used in" v={info.where} />
           </Readouts>
+          <p className="small muted" style={{ margin: 0 }}>
+            <b>Used in:</b> {info.where}
+          </p>
           <p className="small" style={{ margin: 0 }}>
             <b style={{ color: 'var(--good)' }}>+</b> {info.good}
           </p>

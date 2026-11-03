@@ -168,7 +168,7 @@ export function Home() {
               <p>From satellite laser links to cars, TVs, factories and the sea floor.</p>
             </div>
           </Link>
-          <Link to="/lab" className="bento-card">
+          <Link to="/lab" className="bento-card wide">
             <EyeArt />
             <div>
               <span className="eyebrow">Simulator</span>

@@ -12,9 +12,18 @@ export function TopBar({ onSearch }: { onSearch: () => void }) {
   const loc = useLocation();
   useEffect(() => setOpen(false), [loc.pathname]);
   const mac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
+  // Frosted bar whenever content can sit under the header: every page except the top of the home hero.
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const on = () => setScrolled(window.scrollY > 24);
+    on();
+    window.addEventListener('scroll', on, { passive: true });
+    return () => window.removeEventListener('scroll', on);
+  }, [loc.pathname]);
+  const solid = scrolled || loc.pathname !== '/';
 
   return (
-    <header className="topbar">
+    <header className={`topbar ${solid ? 'solid' : ''}`}>
       <Link to="/" className="brand" aria-label="Photonova home">
         <BrandMark />
         <span className="brand-name">

@@ -398,7 +398,7 @@ export function ResultsPanel({ an, chain, ms, rays }: { an: BenchAnalysis | null
             </div>
             <div className="br-rate">
               <b>{fmtRate(an.mimo.capacityBps)}</b>
-              <span className="br-limit">cond. {an.mimo.cond.toFixed(1)}</span>
+              <span className="br-limit">{an.mimo.cond > 1e4 ? "rank-deficient (streams not separable)" : `cond. ${an.mimo.cond.toFixed(1)}`}</span>
             </div>
           </header>
           <table className="br-mimo">

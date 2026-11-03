@@ -45,6 +45,9 @@ export interface Advice {
 const fmtRate = (b: number) => (b >= 1e9 ? `${(b / 1e9).toPrecision(3)} Gb/s` : b >= 1e6 ? `${(b / 1e6).toPrecision(3)} Mb/s` : b >= 1e3 ? `${(b / 1e3).toPrecision(3)} kb/s` : `${b.toFixed(0)} b/s`);
 export { fmtRate };
 
+/** dB value for advisor text; a receiver with no light at all reads "no signal" instead of -Infinity. */
+const fdb = (x: number, unit = 'dB') => (Number.isFinite(x) ? `${x.toFixed(1)} ${unit}` : 'no signal');
+
 export function advise(sc: Scenario, objects: BenchObject[], tr: TraceResult, an: BenchAnalysis, chain: Chain, goals: Goals): Advice {
   const findings: Finding[] = [];
   const target = goals.targetMbps * 1e6;
@@ -66,7 +69,7 @@ export function advise(sc: Scenario, objects: BenchObject[], tr: TraceResult, an
     const fov = (props.fov as number) ?? 60;
     const ok = r.throughput >= target;
     if (ok) {
-      findings.push({ level: 'good', title: `${name}: ${fmtRate(r.throughput)}`, text: `Meets the ${fmtRate(target)} goal at a post-FEC BER below ${chain.targetBer.toExponential(0)}. Margin: SNR ${r.snrEffDb.toFixed(1)} dB.`, fixes: [] });
+      findings.push({ level: 'good', title: `${name}: ${fmtRate(r.throughput)}`, text: `Meets the ${fmtRate(target)} goal at a post-FEC BER below ${chain.targetBer.toExponential(0)}. Margin: SNR ${fdb(r.snrEffDb)}.`, fixes: [] });
     }
     switch (r.limit) {
       case 'blocked':
@@ -146,10 +149,10 @@ export function advise(sc: Scenario, objects: BenchObject[], tr: TraceResult, an
           if (srcObj && !noLos) fixes.push({ label: `Aim ${srcObj.name} at ${name}`, aim: { id: srcObj.id, at: rxObj.id } });
           findings.push({
             level: noLos ? 'bad' : 'warn',
-            title: noLos ? `${name}: no line of sight` : `${name}: not enough light (SNR ${r.snrDb.toFixed(1)} dB)`,
+            title: noLos ? `${name}: no line of sight` : `${name}: not enough light (SNR ${fdb(r.snrDb)})`,
             text: noLos
-              ? `All ${r.prxDbm.toFixed(1)} dBm arrives by diffuse reflection, far too weak. Give the light a specular path: a mirror or RIS that both ends can see.`
-              : `Received ${r.prxDbm.toFixed(1)} dBm. Collect more light, add gain, or trade rate for robustness.`,
+              ? `All ${fdb(r.prxDbm, 'dBm')} arrives by diffuse reflection, far too weak. Give the light a specular path: a mirror or RIS that both ends can see.`
+              : `Received ${fdb(r.prxDbm, 'dBm')}. Collect more light, add gain, or trade rate for robustness.`,
             fixes,
           });
         }
@@ -176,7 +179,7 @@ export function advise(sc: Scenario, objects: BenchObject[], tr: TraceResult, an
         title: `${name}: ${fmtRate(r.throughput)}, below the ${fmtRate(target)} goal`,
         text: bwBound
           ? `Bandwidth is the bottleneck: ${(r.bSys / 1e6).toPrecision(2)} MHz of system bandwidth cannot carry ${fmtRate(target)} at this SNR. Widen it or pack more bits per hertz.`
-          : `SNR is the bottleneck (${r.snrEffDb.toFixed(1)} dB effective). Collect more light or reduce noise.`,
+          : `SNR is the bottleneck (${fdb(r.snrEffDb)} effective). Collect more light or reduce noise.`,
         fixes,
       });
     }

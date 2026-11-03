@@ -84,7 +84,7 @@ export default function UseCasesPage() {
 
         <div className="uc-flow" aria-label="Signal flow">
           {uc.flow.map((f, i) => (
-            <div className="uc-flow-step" key={f} style={{ animationDelay: `${i * 0.25}s` }}>
+            <div className="uc-flow-step" key={`${i}-${f}`} style={{ animationDelay: `${i * 0.25}s` }}>
               <span className="mono">{String(i + 1).padStart(2, '0')}</span>
               {f}
             </div>

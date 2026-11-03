@@ -88,7 +88,7 @@ export function Readouts({ children }: { children: ReactNode }) {
 
 export function Readout({ k, v, tone }: { k: ReactNode; v: ReactNode; tone?: 'good' | 'warn' | 'bad' }) {
   return (
-    <div className={`readout ${tone ?? ''}`}>
+    <div className={`readout ${tone ?? ''}`} title={typeof v === 'string' || typeof v === 'number' ? String(v) : undefined}>
       <div className="k">{k}</div>
       <div className="v">{v}</div>
     </div>

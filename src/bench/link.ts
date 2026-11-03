@@ -117,7 +117,12 @@ function ccBer(p: number) {
 }
 const THRESH: Partial<Record<Coding, number>> = { ldpc12: 0.045, ldpc34: 0.016, ldpc56: 0.008, turbo13: 0.07, polar12: 0.035 };
 
+/** Post-FEC BER, never above 0.5 (a coin flip is the worst a decoder can do). */
 export function postFec(coding: Coding, p: number): number {
+  return Math.min(0.5, postFecRaw(coding, p));
+}
+
+function postFecRaw(coding: Coding, p: number): number {
   if (!(p > 0)) return 0;
   switch (coding) {
     case 'none':
@@ -522,7 +527,7 @@ export function analyse(tr: TraceResult, objects: BenchObject[], chain: Chain, e
       const contrastDb = 10 * Math.log10(Math.max(1e-12, bestSnr));
       const rate = chain.modulation === 'rsook' ? Math.min(bitsPerFrame * fps * 0.8, 1 / (rowUs * 1e-6 * 4)) : bitsPerFrame * Math.min(fps / 2, 30);
       // decisions per pixel block; blur and inter-block interference cap the useful SNR
-      const pre = Math.max(1e-6, Q(Math.sqrt(Math.min(bestSnr, 400))));
+      const pre = Math.min(0.5, Math.max(1e-6, Q(Math.sqrt(Math.max(0, Math.min(bestSnr, 400))))));
       const post = postFec(chain.coding, pre);
       const thr = post <= chain.targetBer ? rate * CODES[chain.coding].rate : 0;
       if (MODS[chain.modulation].family !== 'camera') warnings.push('Cameras sample at the frame or row rate: use rolling-shutter OOK or UFSOOK / screen codes. The estimate assumes a camera scheme.');
